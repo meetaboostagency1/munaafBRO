@@ -5,9 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🚀 Free Host - Landing Page Hosting</title>
     <style>
-        /* ============================================
-           COMPLETE CSS
-           ============================================ */
         * {
             margin: 0;
             padding: 0;
@@ -484,11 +481,6 @@
             color: #333;
         }
 
-        .edit-mode {
-            border-color: #17a2b8 !important;
-            background: #e8f4f8 !important;
-        }
-
         .modal-overlay {
             display: none;
             position: fixed;
@@ -616,9 +608,7 @@
             <button class="tab-btn" data-tab="sites">📋 My Sites</button>
         </div>
 
-        <!-- ============================================ -->
         <!-- TAB 1: UPLOAD -->
-        <!-- ============================================ -->
         <div class="tab-content active" id="tab-upload">
             <form id="uploadForm" enctype="multipart/form-data">
                 <div class="form-group">
@@ -658,9 +648,7 @@
             <div id="result"></div>
         </div>
 
-        <!-- ============================================ -->
         <!-- TAB 2: TEMPLATES -->
-        <!-- ============================================ -->
         <div class="tab-content" id="tab-templates">
             <h3 style="margin-bottom: 10px; color: #444;">🎨 Ready-to-Use Templates</h3>
             <p style="color: #666; margin-bottom: 15px;">Click on any template to use it instantly</p>
@@ -699,9 +687,7 @@
             </div>
         </div>
 
-        <!-- ============================================ -->
         <!-- TAB 3: MY SITES -->
-        <!-- ============================================ -->
         <div class="tab-content" id="tab-sites">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
                 <h3 style="color: #444;">📋 My Hosted Sites</h3>
@@ -732,9 +718,7 @@
         </div>
     </div>
 
-    <!-- ============================================ -->
     <!-- MODAL FOR EDITING -->
-    <!-- ============================================ -->
     <div class="modal-overlay" id="editModal">
         <div class="modal">
             <h2>✏️ Edit Landing Page: <span id="editSubdomain"></span></h2>
@@ -746,15 +730,51 @@
         </div>
     </div>
 
-    <!-- ============================================ -->
-    <!-- JAVASCRIPT - Complete Functionality -->
-    <!-- ============================================ -->
     <script>
         // ============================================
-        // CONFIGURATION
+        // COMPLETE JAVASCRIPT - FIXED FOR VERCEL
         // ============================================
         const STORAGE_KEY = 'hosted_sites';
         let editingSubdomain = null;
+
+        // ============================================
+        // ROUTE HANDLER - RUNS IMMEDIATELY
+        // ============================================
+        (function setupRouter() {
+            const path = window.location.pathname;
+            const match = path.match(/^\/site\/([a-z0-9-]+)$/);
+            
+            if (match) {
+                const subdomain = match[1];
+                const sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                const site = sites.find(s => s.subdomain === subdomain);
+                
+                if (site && site.html) {
+                    // Show the site
+                    document.body.innerHTML = site.html;
+                    
+                    // Add basic styles if missing
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        * { margin:0; padding:0; box-sizing:border-box; }
+                        body { font-family: Arial, sans-serif; background: white; }
+                    `;
+                    document.head.appendChild(style);
+                    return;
+                } else {
+                    // Show 404
+                    document.body.innerHTML = `
+                        <div style="text-align:center;padding:100px 20px;font-family:Arial;">
+                            <h1 style="font-size:4rem;color:#764ba2;">🚀</h1>
+                            <h2 style="color:#333;">Site Not Found</h2>
+                            <p style="color:#666;margin:20px 0;">"${subdomain}" does not exist</p>
+                            <a href="/" style="display:inline-block;background:#764ba2;color:white;padding:12px 30px;border-radius:8px;text-decoration:none;font-weight:600;">🏠 Go to Home</a>
+                        </div>
+                    `;
+                    return;
+                }
+            }
+        })();
 
         // ============================================
         // TAB SWITCHING
@@ -798,7 +818,6 @@
                 const sizeMB = (file.size / 1024 / 1024).toFixed(2);
                 document.getElementById('fileLabel').textContent = file.name + ' (' + sizeMB + ' MB)';
                 
-                // Read file content if it's HTML
                 if (file.name.endsWith('.html') || file.name.endsWith('.htm')) {
                     const reader = new FileReader();
                     reader.onload = function(event) {
@@ -829,161 +848,155 @@
         // ============================================
         const TEMPLATES = {
             business: `<!DOCTYPE html>
-        <html>
-        <head>
-            <title>Business Landing</title>
-            <style>
-                * { margin:0; padding:0; box-sizing:border-box; }
-                body { font-family: Arial, sans-serif; background: #f4f4f4; }
-                .hero { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 80px 20px; text-align: center; }
-                .hero h1 { font-size: 3rem; margin-bottom: 20px; }
-                .hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 30px; }
-                .btn { background: white; color: #764ba2; padding: 15px 40px; border-radius: 30px; text-decoration: none; font-weight: 700; display: inline-block; }
-                .features { padding: 60px 20px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 30px; }
-                .feature { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center; }
-                .feature h3 { color: #764ba2; margin-bottom: 10px; }
-            </style>
-        </head>
-        <body>
-            <div class="hero">
-                <h1>🚀 Business Landing</h1>
-                <p>Your professional business presence online. Ready to grow your audience.</p>
-                <a href="#" class="btn">Get Started</a>
-            </div>
-            <div class="features">
-                <div class="feature"><h3>📊 Analytics</h3><p>Track your visitors</p></div>
-                <div class="feature"><h3>⚡ Fast</h3><p>Lightning speed</p></div>
-                <div class="feature"><h3>🔒 Secure</h3><p>SSL protected</p></div>
-            </div>
-        </body>
-        </html>`,
+<html>
+<head><title>Business Landing</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: Arial, sans-serif; background: #f4f4f4; }
+.hero { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 80px 20px; text-align: center; }
+.hero h1 { font-size: 3rem; margin-bottom: 20px; }
+.hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 30px; }
+.btn { background: white; color: #764ba2; padding: 15px 40px; border-radius: 30px; text-decoration: none; font-weight: 700; display: inline-block; }
+.features { padding: 60px 20px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 30px; }
+.feature { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center; }
+.feature h3 { color: #764ba2; margin-bottom: 10px; }
+</style>
+</head>
+<body>
+<div class="hero">
+<h1>🚀 Business Landing</h1>
+<p>Your professional business presence online. Ready to grow your audience.</p>
+<a href="#" class="btn">Get Started</a>
+</div>
+<div class="features">
+<div class="feature"><h3>📊 Analytics</h3><p>Track your visitors</p></div>
+<div class="feature"><h3>⚡ Fast</h3><p>Lightning speed</p></div>
+<div class="feature"><h3>🔒 Secure</h3><p>SSL protected</p></div>
+</div>
+</body>
+</html>`,
 
             portfolio: `<!DOCTYPE html>
-        <html>
-        <head>
-            <title>Portfolio</title>
-            <style>
-                * { margin:0; padding:0; box-sizing:border-box; }
-                body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: white; }
-                .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
-                .header { text-align: center; padding: 60px 0; }
-                .header h1 { font-size: 3.5rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-                .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 30px; }
-                .card { background: #1a1a1a; border-radius: 12px; padding: 30px; text-align: center; border: 1px solid #333; transition: transform 0.3s; }
-                .card:hover { transform: translateY(-10px); border-color: #764ba2; }
-                .card .icon { font-size: 3rem; margin-bottom: 15px; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header"><h1>🎨 My Portfolio</h1><p style="color:#888; margin-top:10px;">Creative work, unique designs</p></div>
-                <div class="grid">
-                    <div class="card"><div class="icon">🎯</div><h3>Project 1</h3><p style="color:#888;">Web Design</p></div>
-                    <div class="card"><div class="icon">🎨</div><h3>Project 2</h3><p style="color:#888;">UI/UX</p></div>
-                    <div class="card"><div class="icon">🚀</div><h3>Project 3</h3><p style="color:#888;">Development</p></div>
-                </div>
-            </div>
-        </body>
-        </html>`,
+<html>
+<head><title>Portfolio</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: white; }
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+.header { text-align: center; padding: 60px 0; }
+.header h1 { font-size: 3.5rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 30px; }
+.card { background: #1a1a1a; border-radius: 12px; padding: 30px; text-align: center; border: 1px solid #333; transition: transform 0.3s; }
+.card:hover { transform: translateY(-10px); border-color: #764ba2; }
+.card .icon { font-size: 3rem; margin-bottom: 15px; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header"><h1>🎨 My Portfolio</h1><p style="color:#888; margin-top:10px;">Creative work, unique designs</p></div>
+<div class="grid">
+<div class="card"><div class="icon">🎯</div><h3>Project 1</h3><p style="color:#888;">Web Design</p></div>
+<div class="card"><div class="icon">🎨</div><h3>Project 2</h3><p style="color:#888;">UI/UX</p></div>
+<div class="card"><div class="icon">🚀</div><h3>Project 3</h3><p style="color:#888;">Development</p></div>
+</div>
+</div>
+</body>
+</html>`,
 
             startup: `<!DOCTYPE html>
-        <html>
-        <head>
-            <title>Startup</title>
-            <style>
-                * { margin:0; padding:0; box-sizing:border-box; }
-                body { font-family: 'Segoe UI', sans-serif; background: white; }
-                .hero { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 100px 20px; text-align: center; color: white; }
-                .hero h1 { font-size: 4rem; margin-bottom: 20px; }
-                .hero p { font-size: 1.3rem; opacity: 0.9; }
-                .cta { display: inline-block; background: white; color: #f5576c; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 700; margin-top: 20px; }
-            </style>
-        </head>
-        <body>
-            <div class="hero">
-                <h1>🚀 Startup</h1>
-                <p>Launch your idea. Build your future.</p>
-                <a href="#" class="cta">Join Waitlist</a>
-            </div>
-        </body>
-        </html>`,
+<html>
+<head><title>Startup</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Segoe UI', sans-serif; background: white; }
+.hero { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 100px 20px; text-align: center; color: white; }
+.hero h1 { font-size: 4rem; margin-bottom: 20px; }
+.hero p { font-size: 1.3rem; opacity: 0.9; }
+.cta { display: inline-block; background: white; color: #f5576c; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 700; margin-top: 20px; }
+</style>
+</head>
+<body>
+<div class="hero">
+<h1>🚀 Startup</h1>
+<p>Launch your idea. Build your future.</p>
+<a href="#" class="cta">Join Waitlist</a>
+</div>
+</body>
+</html>`,
 
             landing: `<!DOCTYPE html>
-        <html>
-        <head>
-            <title>Landing Page</title>
-            <style>
-                * { margin:0; padding:0; box-sizing:border-box; }
-                body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin:0; }
-                .card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 60px; border-radius: 20px; text-align: center; max-width: 500px; border: 1px solid rgba(255,255,255,0.1); }
-                .card h1 { font-size: 2.5rem; margin-bottom: 15px; }
-                .card p { color: #aaa; margin-bottom: 30px; }
-                .input-group { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-                .input-group input { flex: 1; min-width: 200px; padding: 12px 20px; border-radius: 8px; border: none; }
-                .input-group button { padding: 12px 30px; border-radius: 8px; border: none; background: #667eea; color: white; font-weight: 700; cursor: pointer; }
-            </style>
-        </head>
-        <body>
-            <div class="card">
-                <h1>📱 Landing</h1>
-                <p>Subscribe to get updates</p>
-                <div class="input-group">
-                    <input type="email" placeholder="Your email">
-                    <button>Subscribe</button>
-                </div>
-            </div>
-        </body>
-        </html>`,
+<html>
+<head><title>Landing Page</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin:0; }
+.card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 60px; border-radius: 20px; text-align: center; max-width: 500px; border: 1px solid rgba(255,255,255,0.1); }
+.card h1 { font-size: 2.5rem; margin-bottom: 15px; }
+.card p { color: #aaa; margin-bottom: 30px; }
+.input-group { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+.input-group input { flex: 1; min-width: 200px; padding: 12px 20px; border-radius: 8px; border: none; }
+.input-group button { padding: 12px 30px; border-radius: 8px; border: none; background: #667eea; color: white; font-weight: 700; cursor: pointer; }
+</style>
+</head>
+<body>
+<div class="card">
+<h1>📱 Landing</h1>
+<p>Subscribe to get updates</p>
+<div class="input-group">
+<input type="email" placeholder="Your email">
+<button>Subscribe</button>
+</div>
+</div>
+</body>
+</html>`,
 
             blog: `<!DOCTYPE html>
-        <html>
-        <head>
-            <title>Blog</title>
-            <style>
-                * { margin:0; padding:0; box-sizing:border-box; }
-                body { font-family: 'Georgia', serif; background: #fafafa; color: #333; }
-                .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
-                .header { text-align: center; padding: 40px 0; }
-                .header h1 { font-size: 2.5rem; }
-                .post { background: white; padding: 30px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-                .post h2 { color: #764ba2; }
-                .post .meta { color: #888; font-size: 0.9rem; margin: 10px 0; }
-            </style>
-        </head>
-        <body>
-            <div class="container">
-                <div class="header"><h1>📝 Blog</h1><p style="color:#888;">Thoughts & ideas</p></div>
-                <div class="post"><h2>Hello World</h2><div class="meta">July 25, 2026</div><p>Welcome to my blog. This is a sample post.</p></div>
-                <div class="post"><h2>Another Post</h2><div class="meta">July 24, 2026</div><p>More content coming soon...</p></div>
-            </div>
-        </body>
-        </html>`,
+<html>
+<head><title>Blog</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Georgia', serif; background: #fafafa; color: #333; }
+.container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+.header { text-align: center; padding: 40px 0; }
+.header h1 { font-size: 2.5rem; }
+.post { background: white; padding: 30px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.post h2 { color: #764ba2; }
+.post .meta { color: #888; font-size: 0.9rem; margin: 10px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header"><h1>📝 Blog</h1><p style="color:#888;">Thoughts & ideas</p></div>
+<div class="post"><h2>Hello World</h2><div class="meta">July 25, 2026</div><p>Welcome to my blog. This is a sample post.</p></div>
+<div class="post"><h2>Another Post</h2><div class="meta">July 24, 2026</div><p>More content coming soon...</p></div>
+</div>
+</body>
+</html>`,
 
             ecommerce: `<!DOCTYPE html>
-        <html>
-        <head>
-            <title>Shop</title>
-            <style>
-                * { margin:0; padding:0; box-sizing:border-box; }
-                body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; }
-                .header { background: white; padding: 20px 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-                .header h1 { color: #764ba2; }
-                .products { max-width: 1200px; margin: 40px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 30px; padding: 0 20px; }
-                .product { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-                .product .price { color: #764ba2; font-weight: 700; font-size: 1.2rem; margin: 10px 0; }
-                .product button { background: #764ba2; color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; }
-                .product button:hover { background: #5a3d8a; }
-            </style>
-        </head>
-        <body>
-            <div class="header"><h1>🛒 Shop</h1><span style="color:#888;">🛍️ Cart (0)</span></div>
-            <div class="products">
-                <div class="product"><h3>Product 1</h3><div class="price">$29.99</div><button>Add to Cart</button></div>
-                <div class="product"><h3>Product 2</h3><div class="price">$49.99</div><button>Add to Cart</button></div>
-                <div class="product"><h3>Product 3</h3><div class="price">$99.99</div><button>Add to Cart</button></div>
-            </div>
-        </body>
-        </html>`
+<html>
+<head><title>Shop</title>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; }
+.header { background: white; padding: 20px 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+.header h1 { color: #764ba2; }
+.products { max-width: 1200px; margin: 40px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 30px; padding: 0 20px; }
+.product { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+.product .price { color: #764ba2; font-weight: 700; font-size: 1.2rem; margin: 10px 0; }
+.product button { background: #764ba2; color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; }
+.product button:hover { background: #5a3d8a; }
+</style>
+</head>
+<body>
+<div class="header"><h1>🛒 Shop</h1><span style="color:#888;">🛍️ Cart (0)</span></div>
+<div class="products">
+<div class="product"><h3>Product 1</h3><div class="price">$29.99</div><button>Add to Cart</button></div>
+<div class="product"><h3>Product 2</h3><div class="price">$49.99</div><button>Add to Cart</button></div>
+<div class="product"><h3>Product 3</h3><div class="price">$99.99</div><button>Add to Cart</button></div>
+</div>
+</body>
+</html>`
         };
 
         // Template click handler
@@ -1029,7 +1042,6 @@
                 return;
             }
 
-            // Check if subdomain already exists
             const sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
             if (sites.find(s => s.subdomain === cleanSub)) {
                 if (!confirm(`⚠️ "${cleanSub}" already exists. Overwrite?`)) {
@@ -1047,37 +1059,33 @@
 
                 if (file) {
                     if (file.name.endsWith('.html') || file.name.endsWith('.htm')) {
-                        // Read file content
                         const reader = new FileReader();
                         finalHtml = await new Promise((resolve) => {
                             reader.onload = function(e) { resolve(e.target.result); };
                             reader.readAsText(file);
                         });
                     } else if (file.name.endsWith('.zip')) {
-                        // For ZIP files, we create a landing page
                         finalHtml = `<!DOCTYPE html>
-        <html>
-        <head>
-            <title>${cleanSub}</title>
-            <style>
-                body { font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-align: center; margin:0; }
-                .card { background: rgba(255,255,255,0.1); padding: 40px; border-radius: 20px; backdrop-filter: blur(10px); }
-                h1 { font-size: 2.5rem; }
-                small { opacity: 0.7; }
-            </style>
-        </head>
-        <body>
-            <div class="card">
-                <h1>🚀 ${cleanSub}</h1>
-                <p>ZIP file uploaded successfully!</p>
-                <small>${file.name} (${(file.size/1024/1024).toFixed(2)} MB)</small>
-            </div>
-        </body>
-        </html>`;
+<html>
+<head><title>${cleanSub}</title>
+<style>
+body { font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-align: center; margin:0; }
+.card { background: rgba(255,255,255,0.1); padding: 40px; border-radius: 20px; backdrop-filter: blur(10px); }
+h1 { font-size: 2.5rem; }
+small { opacity: 0.7; }
+</style>
+</head>
+<body>
+<div class="card">
+<h1>🚀 ${cleanSub}</h1>
+<p>ZIP file uploaded successfully!</p>
+<small>${file.name} (${(file.size/1024/1024).toFixed(2)} MB)</small>
+</div>
+</body>
+</html>`;
                     }
                 }
 
-                // Save to localStorage
                 const existing = sites.find(s => s.subdomain === cleanSub);
                 if (existing) {
                     existing.html = finalHtml;
@@ -1101,7 +1109,6 @@
                     <small style="display:block; margin-top:10px;">📋 Copy karein aur share karein!</small>
                 `, 'success');
 
-                // Clear form
                 document.getElementById('htmlEditor').value = '';
                 document.getElementById('fileInput').value = '';
                 document.getElementById('fileName').style.display = 'none';
@@ -1133,7 +1140,7 @@
                 return;
             }
 
-            siteList.innerHTML = sites.map((site, index) => `
+            siteList.innerHTML = sites.map((site) => `
                 <div class="site-item">
                     <div class="site-info">
                         <span>🚀</span>
@@ -1228,7 +1235,6 @@
             }
         }
 
-        // Close modal on overlay click
         document.getElementById('editModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeEditModal();
@@ -1250,43 +1256,12 @@
         }
 
         // ============================================
-        // ROUTE HANDLER FOR SITES
-        // ============================================
-        (function setupRouter() {
-            const originalPushState = history.pushState;
-            history.pushState = function(...args) {
-                originalPushState.apply(this, args);
-                checkRoute();
-            };
-
-            window.addEventListener('popstate', checkRoute);
-
-            function checkRoute() {
-                const path = window.location.pathname;
-                const match = path.match(/^\/site\/([a-z0-9-]+)$/);
-                if (match) {
-                    const subdomain = match[1];
-                    const sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-                    const site = sites.find(s => s.subdomain === subdomain);
-                    if (site && site.html) {
-                        document.body.innerHTML = site.html;
-                        return;
-                    }
-                }
-            }
-
-            setTimeout(checkRoute, 100);
-        })();
-
-        // ============================================
         // KEYBOARD SHORTCUTS
         // ============================================
         document.addEventListener('keydown', function(e) {
-            // Escape to close modal
             if (e.key === 'Escape') {
                 closeEditModal();
             }
-            // Ctrl+S to save edit
             if (e.ctrlKey && e.key === 's') {
                 if (document.getElementById('editModal').classList.contains('active')) {
                     e.preventDefault();
@@ -1303,9 +1278,6 @@
 
         console.log('🚀 Free Host Platform Loaded!');
         console.log('📊 Total Sites:', JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').length);
-        console.log('💡 Upload a landing page to get started!');
-        console.log('✏️ Edit any site by clicking "Edit" button');
-        console.log('⌨️ Press Ctrl+S to save when editing');
     </script>
 
 </body>
