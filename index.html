@@ -15,7 +15,6 @@
         .badge { display: inline-block; background: #28a745; color: white; padding: 5px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-top: 10px; }
         .domain-badge { display: inline-block; background: #17a2b8; color: white; padding: 5px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-top: 5px; margin-left: 5px; }
         
-        /* Login/Register Section */
         .login-section { background: #f8f9fa; border-radius: 12px; padding: 20px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; }
         .login-section .user-info { display: flex; align-items: center; gap: 10px; }
         .login-section .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; }
@@ -28,7 +27,6 @@
         .logout-btn:hover { background: #c82333; }
         .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
         
-        /* Modal for Register/Login */
         .auth-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center; padding: 20px; }
         .auth-modal.active { display: flex; }
         .auth-modal-content { background: white; border-radius: 20px; padding: 40px; max-width: 450px; width: 100%; animation: slideUp 0.4s ease-out; }
@@ -119,10 +117,8 @@
         .subdomain-auto h4 { color: #17a2b8; margin-bottom: 5px; }
         .subdomain-auto p { color: #555; font-size: 0.9rem; }
         .subdomain-auto code { background: white; padding: 2px 8px; border-radius: 4px; color: #17a2b8; font-weight: 600; }
-        .fix-banner { background: #d4edda; border: 2px solid #28a745; border-radius: 12px; padding: 15px; margin-bottom: 20px; text-align: center; }
-        .fix-banner h4 { color: #155724; }
-        .fix-banner code { background: white; padding: 2px 8px; border-radius: 4px; color: #155724; font-weight: 600; }
         .password-hint { font-size: 0.8rem; color: #999; margin-top: 5px; }
+        .live-site-view { display: none; }
         @media (max-width: 600px) { .container { padding: 20px; } .header h1 { font-size: 1.8rem; } .stats { flex-direction: column; align-items: center; } .tab-btn { flex: 1; text-align: center; padding: 8px 12px; font-size: 0.9rem; min-width: 80px; } .site-item { flex-direction: column; align-items: flex-start; } .site-item .site-actions { width: 100%; justify-content: flex-start; } .auth-modal-content { padding: 25px; } .btn-group { flex-direction: column; width: 100%; } .btn-group button { width: 100%; } }
     </style>
 </head>
@@ -133,15 +129,10 @@
             <h1>🚀 Free Host</h1>
             <p>Apni landing page <strong>FREE</strong> mein host karein</p>
             <span class="badge">⚡ 100% Free</span>
-            <span class="domain-badge">🌐 munaaf-bro.vercel.app</span>
+            <span class="domain-badge">🌐 Any Domain</span>
         </div>
 
-        <div class="fix-banner">
-            <h4>✅ 404 Error Fixed!</h4>
-            <p>All links now work: <code>/site/anything</code> → <code>index.html</code></p>
-        </div>
-
-        <!-- Login Section with Register/Login -->
+        <!-- Login Section -->
         <div class="login-section" id="loginSection">
             <div class="user-info" id="userInfo" style="display:none;">
                 <div class="user-avatar" id="userAvatar">G</div>
@@ -179,13 +170,13 @@
 
         <div class="subdomain-auto" id="subdomainAuto" style="display:none;">
             <h4>🔗 Your Auto-Generated Subdomain</h4>
-            <p>Your unique URL: <code id="autoSubdomainLink">https://munaaf-bro.vercel.app/site/yourname</code></p>
-            <small style="color:#999;">This subdomain is created from your Gmail username</small>
+            <p>Your unique URL: <code id="autoSubdomainLink">https://your-domain.com/site/yourname</code></p>
+            <small style="color:#999;">This subdomain is created from your username</small>
         </div>
 
         <div class="live-link-box" id="liveLinkBox" style="display:none;">
             <h3>✅ Your Site is Live!</h3>
-            <a href="#" id="liveLink" target="_blank">https://munaaf-bro.vercel.app/site/your-site</a>
+            <a href="#" id="liveLink" target="_blank">https://your-domain.com/site/your-site</a>
             <br><br>
             <button onclick="copyLink()" class="btn-secondary">📋 Copy Link</button>
         </div>
@@ -202,7 +193,7 @@
                     <label for="subdomain">🔗 Choose Your URL</label>
                     <input type="text" id="subdomain" name="subdomain" placeholder="mypage" required>
                     <div class="example">
-                        💡 Your URL: <code id="urlPreview">https://munaaf-bro.vercel.app/site/mypage</code>
+                        💡 Your URL: <code id="urlPreview">https://your-domain.com/site/mypage</code>
                         <br><small style="color:#999;">👉 Login/Register ke baad auto subdomain milega!</small>
                     </div>
                 </div>
@@ -277,15 +268,22 @@
 
     <script>
         // ============================================
-        // DOMAIN CONFIGURATION
+        // DOMAIN CONFIGURATION - AUTO DETECT
         // ============================================
-        const DOMAIN = 'munaaf-bro.vercel.app';
-        const PROTOCOL = 'https://';
+        const DOMAIN = window.location.hostname + (window.location.port ? ':' + window.location.port : '');
+        const PROTOCOL = window.location.protocol;
         const STORAGE_KEY = 'hosted_sites';
         const USERS_KEY = 'registered_users';
         let currentUser = null;
         let editingSubdomain = null;
         let isLoginMode = false;
+
+        // Update domain display
+        document.querySelectorAll('.domain-badge, .example code, .subdomain-auto code, .live-link-box a, #urlPreview, #autoSubdomainLink, #liveLink').forEach(el => {
+            if (el.textContent.includes('your-domain.com') || el.textContent.includes('yourname') || el.textContent.includes('your-site')) {
+                el.textContent = el.textContent.replace(/your-domain\.com/g, DOMAIN);
+            }
+        });
 
         // ============================================
         // AUTHENTICATION - Register/Login
@@ -365,7 +363,6 @@
             const users = getUsers();
 
             if (isLoginMode) {
-                // Login
                 if (!users[email]) {
                     showResult('❌ User not found! Please register first.', 'error');
                     return;
@@ -374,7 +371,6 @@
                     showResult('❌ Incorrect password!', 'error');
                     return;
                 }
-                // Login successful
                 currentUser = {
                     email: email,
                     name: email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, ''),
@@ -390,7 +386,6 @@
                 createUserSubdomain(currentUser.subdomain);
 
             } else {
-                // Register
                 if (users[email]) {
                     showResult('❌ User already exists! Please login.', 'error');
                     return;
@@ -401,7 +396,6 @@
                 };
                 saveUsers(users);
                 
-                // Auto-login after registration
                 currentUser = {
                     email: email,
                     name: email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, ''),
@@ -418,7 +412,6 @@
             }
         }
 
-        // Close modal on outside click
         document.getElementById('authModal').addEventListener('click', function(e) {
             if (e.target === this) closeAuthModal();
         });
@@ -445,8 +438,8 @@
             const link = document.getElementById('autoSubdomainLink');
             if (currentUser) {
                 div.style.display = 'block';
-                link.textContent = `${PROTOCOL}${DOMAIN}/site/${currentUser.subdomain}`;
-                link.href = `${PROTOCOL}${DOMAIN}/site/${currentUser.subdomain}`;
+                link.textContent = `${PROTOCOL}//${DOMAIN}/site/${currentUser.subdomain}`;
+                link.href = `${PROTOCOL}//${DOMAIN}/site/${currentUser.subdomain}`;
             } else {
                 div.style.display = 'none';
             }
@@ -487,7 +480,7 @@
         }
 
         // ============================================
-        // ROUTE HANDLER - FIXED
+        // ROUTE HANDLER - NO VERCEL DEPENDENCY
         // ============================================
         (function() {
             const path = window.location.pathname;
@@ -556,10 +549,10 @@
 
         document.getElementById('subdomain').addEventListener('input', function() {
             const val = this.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
-            document.getElementById('urlPreview').textContent = `${PROTOCOL}${DOMAIN}/site/${val || 'your-site'}`;
+            document.getElementById('urlPreview').textContent = `${PROTOCOL}//${DOMAIN}/site/${val || 'your-site'}`;
         });
 
-        document.getElementById('urlPreview').textContent = `${PROTOCOL}${DOMAIN}/site/your-site`;
+        document.getElementById('urlPreview').textContent = `${PROTOCOL}//${DOMAIN}/site/your-site`;
 
         const fileInput = document.getElementById('fileInput');
         fileInput.addEventListener('change', function(e) {
@@ -689,7 +682,7 @@
                 }
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
 
-                const url = `${PROTOCOL}${DOMAIN}/site/${cleanSub}`;
+                const url = `${PROTOCOL}//${DOMAIN}/site/${cleanSub}`;
 
                 const liveLinkBox = document.getElementById('liveLinkBox');
                 const liveLink = document.getElementById('liveLink');
@@ -749,12 +742,12 @@
                 <div class="site-item">
                     <div class="site-info">
                         <span>🚀</span>
-                        <a href="${PROTOCOL}${DOMAIN}/site/${site.subdomain}" target="_blank" class="site-url">${site.subdomain}</a>
+                        <a href="${PROTOCOL}//${DOMAIN}/site/${site.subdomain}" target="_blank" class="site-url">${site.subdomain}</a>
                         <small style="color:#888;">${new Date(site.date).toLocaleDateString()}</small>
                         ${site.user ? `<small style="color:#17a2b8;">👤 ${site.user.split('@')[0]}</small>` : ''}
                     </div>
                     <div class="site-actions">
-                        <a href="${PROTOCOL}${DOMAIN}/site/${site.subdomain}" target="_blank" class="btn-secondary" style="padding:4px 12px;text-decoration:none;">🔗 Visit</a>
+                        <a href="${PROTOCOL}//${DOMAIN}/site/${site.subdomain}" target="_blank" class="btn-secondary" style="padding:4px 12px;text-decoration:none;">🔗 Visit</a>
                         ${currentUser && site.user === currentUser.email ? `
                             <button class="btn-edit" onclick="openEditModal('${site.subdomain}')">✏️ Edit</button>
                             <button class="btn-danger" onclick="deleteSite('${site.subdomain}')">🗑️</button>
@@ -901,9 +894,8 @@
         console.log('🌐 Domain:', DOMAIN);
         console.log('📊 Total Sites:', JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').length);
         console.log('👤 User:', currentUser ? currentUser.email : 'Not logged in');
-        console.log('🔗 Try: https://munaaf-bro.vercel.app/site/jj');
-        console.log('🔗 Try: https://munaaf-bro.vercel.app/site/adbuilagency');
-        console.log('🔗 All links now work! Try: /site/anything');
+        console.log('🔗 Try: /site/jj or /site/adbuilagency');
+        console.log('🔗 All links now work! No Vercel dependency!');
     </script>
 
 </body>
