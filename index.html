@@ -1,237 +1,1312 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="hi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Free Host - Landing Page Hosting</title>
+    <style>
+        /* ============================================
+           COMPLETE CSS
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.6s ease-out;
+        }
 
-<style>
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
 
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:'Poppins',sans-serif;
-}
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-body{
-background:#0f172a;
-display:flex;
-justify-content:center;
-align-items:center;
-min-height:100vh;
-color:#fff;
-}
+        .header h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
 
-/* CARD */
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-top: 5px;
+        }
 
-.container{
-width:95%;
-max-width:420px;
-padding:30px 25px;
-border-radius:18px;
+        .badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            margin-top: 10px;
+        }
 
-background:rgba(255,255,255,0.05);
-backdrop-filter:blur(12px);
+        .tab-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
 
-border:1px solid rgba(255,255,255,0.08);
+        .tab-btn {
+            padding: 10px 24px;
+            border: none;
+            background: transparent;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #888;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
 
-box-shadow:0 20px 60px rgba(0,0,0,0.6);
-text-align:center;
-}
+        .tab-btn.active {
+            background: #f0ebf8;
+            color: #764ba2;
+        }
 
-/* LOGO */
+        .tab-btn:hover {
+            background: #f0ebf8;
+            color: #764ba2;
+        }
 
-.logo{
-width:80px;
-height:80px;
-border-radius:50%;
-border:2px solid #FFD700;
-margin-bottom:12px;
-}
+        .tab-content {
+            display: none;
+            animation: slideUp 0.4s ease-out;
+        }
 
-/* TEXT */
+        .tab-content.active {
+            display: block;
+        }
 
-h1{
-font-size:22px;
-color:#FFD700;
-margin-bottom:6px;
-}
+        .form-group {
+            margin-bottom: 25px;
+        }
 
-h2{
-font-size:15px;
-opacity:0.9;
-margin-bottom:10px;
-}
+        label {
+            display: block;
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
 
-.sub{
-font-size:13px;
-opacity:0.7;
-margin-bottom:18px;
-}
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
 
-/* BUTTON */
+        input[type="text"]:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #764ba2;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(118, 75, 162, 0.1);
+        }
 
-.btn{
-display:block;
-text-decoration:none;
-background:#22c55e;
-color:#000;
-font-weight:700;
-padding:16px;
-border-radius:10px;
-margin:12px 0;
-transition:0.3s;
-}
+        textarea {
+            min-height: 200px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
 
-.btn:hover{
-background:#16a34a;
-transform:scale(1.03);
-}
+        .file-upload-wrapper {
+            position: relative;
+            border: 2px dashed #d0d0d0;
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            background: #f8f9fa;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
 
-/* TRUST BOX */
+        .file-upload-wrapper:hover {
+            border-color: #764ba2;
+            background: #f0ebf8;
+        }
 
-.trust{
-background:rgba(0,255,150,0.08);
-padding:10px;
-border-radius:10px;
-font-size:13px;
-margin-bottom:15px;
-border:1px solid rgba(0,255,150,0.2);
-}
+        .file-upload-wrapper.dragover {
+            border-color: #764ba2;
+            background: #e8dff5;
+        }
 
-/* LIST */
+        .file-upload-wrapper input[type="file"] {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
 
-.points{
-list-style:none;
-font-size:14px;
-text-align:left;
-margin:15px 0;
-}
+        .file-upload-icon {
+            font-size: 4rem;
+            color: #764ba2;
+            margin-bottom: 10px;
+        }
 
-.points li{
-margin:8px 0;
-}
+        .file-upload-text {
+            color: #666;
+            font-size: 1.1rem;
+        }
 
-/* URGENCY */
+        .file-upload-text strong {
+            color: #764ba2;
+        }
 
-.timer{
-margin-top:10px;
-font-size:13px;
-color:#facc15;
-}
+        .file-upload-text small {
+            display: block;
+            margin-top: 5px;
+            color: #999;
+        }
 
-/* SOCIAL PROOF */
+        .file-name {
+            margin-top: 10px;
+            color: #28a745;
+            font-weight: 600;
+            display: none;
+            padding: 10px;
+            background: #d4edda;
+            border-radius: 8px;
+        }
 
-.proof{
-margin-top:12px;
-font-size:12px;
-opacity:0.7;
-}
+        .btn-primary {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
 
-/* FOOTER BRAND */
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(118, 75, 162, 0.3);
+        }
 
-.footer{
-margin-top:20px;
-font-size:12px;
-opacity:0.6;
-}
+        .btn-primary:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
 
-.footer a{
-color:#38bdf8;
-text-decoration:none;
-font-weight:600;
-}
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
 
-.footer a:hover{
-text-decoration:underline;
-}
+        .btn-danger:hover {
+            background: #c82333;
+            transform: scale(1.05);
+        }
 
-/* RISK */
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
 
-.risk{
-margin-top:10px;
-font-size:11px;
-opacity:0.5;
-}
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
 
-</style>
+        .btn-edit {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .btn-edit:hover {
+            background: #138496;
+            transform: scale(1.05);
+        }
+
+        #result {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            display: none;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        #result.success {
+            background: #d4edda;
+            border: 2px solid #28a745;
+            display: block;
+        }
+
+        #result.error {
+            background: #f8d7da;
+            border: 2px solid #dc3545;
+            display: block;
+        }
+
+        #result.info {
+            background: #d1ecf1;
+            border: 2px solid #17a2b8;
+            display: block;
+        }
+
+        #result a {
+            color: #155724;
+            font-weight: 700;
+            text-decoration: none;
+            word-break: break-all;
+        }
+
+        #result a:hover {
+            text-decoration: underline;
+        }
+
+        .loader {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loader.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #764ba2;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .example {
+            background: #f0ebf8;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .example code {
+            background: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #764ba2;
+            font-weight: 600;
+        }
+
+        .site-list {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .site-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 14px;
+            border-bottom: 1px solid #eee;
+            transition: background 0.2s;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .site-item:hover {
+            background: #f0ebf8;
+        }
+
+        .site-item:last-child {
+            border-bottom: none;
+        }
+
+        .site-item .site-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .site-item .site-url {
+            color: #764ba2;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .site-item .site-url:hover {
+            text-decoration: underline;
+        }
+
+        .site-item .site-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .empty-sites {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+        }
+
+        .stats {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            display: flex;
+            justify-content: space-around;
+            color: #666;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .stats .stat-item {
+            text-align: center;
+        }
+
+        .stats .stat-number {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #764ba2;
+            display: block;
+        }
+
+        .stats .stat-label {
+            font-size: 0.85rem;
+            color: #888;
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .template-card {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .template-card:hover {
+            border-color: #764ba2;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .template-card .template-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .template-card .template-name {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .edit-mode {
+            border-color: #17a2b8 !important;
+            background: #e8f4f8 !important;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 700px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .modal h2 {
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .modal textarea {
+            min-height: 300px;
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            resize: vertical;
+        }
+
+        .modal .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: flex-end;
+        }
+
+        .modal .modal-actions button {
+            padding: 10px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .modal .modal-actions .btn-save {
+            background: #28a745;
+            color: white;
+        }
+
+        .modal .modal-actions .btn-save:hover {
+            background: #218838;
+        }
+
+        .modal .modal-actions .btn-close {
+            background: #6c757d;
+            color: white;
+        }
+
+        .modal .modal-actions .btn-close:hover {
+            background: #5a6268;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            .stats {
+                flex-direction: column;
+                align-items: center;
+            }
+            .tab-container {
+                flex-wrap: wrap;
+            }
+            .tab-btn {
+                flex: 1;
+                text-align: center;
+                padding: 8px 12px;
+                font-size: 0.9rem;
+                min-width: 80px;
+            }
+            .site-item {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .site-item .site-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<div class="container">
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🚀 Free Host</h1>
+            <p>Apni landing page <strong>FREE</strong> mein host karein</p>
+            <span class="badge">⚡ 100% Free</span>
+        </div>
 
-<img src="https://i.ibb.co/H3h01XL/cropped-circle-image-1.png" class="logo">
+        <!-- Tabs -->
+        <div class="tab-container">
+            <button class="tab-btn active" data-tab="upload">📤 Upload</button>
+            <button class="tab-btn" data-tab="templates">🎨 Templates</button>
+            <button class="tab-btn" data-tab="sites">📋 My Sites</button>
+        </div>
 
-<h1>PANKAJ BHARDWAJ WAY2LAABH™️</h1>
-<h2>NIFTY • BANKNIFTY • OPTIONS</h2>
+        <!-- ============================================ -->
+        <!-- TAB 1: UPLOAD -->
+        <!-- ============================================ -->
+        <div class="tab-content active" id="tab-upload">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="subdomain">🔗 Choose Your URL</label>
+                    <input type="text" id="subdomain" name="subdomain" placeholder="mypage" required>
+                    <div class="example">
+                        💡 Your URL: <code id="urlPreview">https://your-domain.com/mypage</code>
+                    </div>
+                </div>
 
-<p class="sub">
-Daily Intraday Trading Signals & Analysis
-</p>
+                <div class="form-group">
+                    <label>📁 Upload Landing Page</label>
+                    <div class="file-upload-wrapper" id="dropZone">
+                        <input type="file" id="fileInput" name="landing" accept=".zip,.html,.htm">
+                        <div class="file-upload-icon">📤</div>
+                        <div class="file-upload-text">
+                            <strong>Click karein</strong> ya drag & drop karein<br>
+                            <small>.zip, .html (max 100MB)</small>
+                        </div>
+                        <div class="file-name" id="fileName">✅ File selected: <span id="fileLabel"></span></div>
+                    </div>
+                </div>
 
-<!-- TOP BUTTON -->
-<a href="https://t.me/+XN1lLqEJOlE0NTI9" class="btn">
-🚀 Join Free Telegram Channel
-</a>
+                <div class="form-group">
+                    <label>✏️ Ya direct HTML likhein</label>
+                    <textarea id="htmlEditor" placeholder="Apna HTML code yahan likhein..."></textarea>
+                </div>
 
-<div class="trust">
-✔ Trusted by 5,000+ Traders <br>
-✔ Daily Consistent Setups
-</div>
+                <div class="loader" id="loader">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 10px; color: #666;">⏳ Landing page deploy ho raha hai...</p>
+                </div>
 
-<ul class="points">
-<li>✔ 5–7 High Probability Trades</li>
-<li>✔ Exact Entry, SL & Target</li>
-<li>✔ Beginner Friendly Guidance</li>
-<li>✔ Live Market Updates</li>
-</ul>
+                <button type="submit" class="btn-primary" id="submitBtn">🚀 Free Host Karo!</button>
+            </form>
 
-<!-- BOTTOM BUTTON -->
-<a href="https://t.me/+XN1lLqEJOlE0NTI9" class="btn">
-🚀 Join Free Telegram Channel
-</a>
+            <div id="result"></div>
+        </div>
 
-<div class="timer">
-⏳ Free Access Closing Soon
-</div>
+        <!-- ============================================ -->
+        <!-- TAB 2: TEMPLATES -->
+        <!-- ============================================ -->
+        <div class="tab-content" id="tab-templates">
+            <h3 style="margin-bottom: 10px; color: #444;">🎨 Ready-to-Use Templates</h3>
+            <p style="color: #666; margin-bottom: 15px;">Click on any template to use it instantly</p>
 
-<div class="proof">
-📈 Limited Seats • Active Community
-</div>
+            <div class="template-grid">
+                <div class="template-card" data-template="business">
+                    <div class="template-icon">🏢</div>
+                    <div class="template-name">Business</div>
+                    <small style="color: #999;">Professional</small>
+                </div>
+                <div class="template-card" data-template="portfolio">
+                    <div class="template-icon">🎨</div>
+                    <div class="template-name">Portfolio</div>
+                    <small style="color: #999;">Creative</small>
+                </div>
+                <div class="template-card" data-template="startup">
+                    <div class="template-icon">🚀</div>
+                    <div class="template-name">Startup</div>
+                    <small style="color: #999;">Modern</small>
+                </div>
+                <div class="template-card" data-template="landing">
+                    <div class="template-icon">📱</div>
+                    <div class="template-name">Landing</div>
+                    <small style="color: #999;">Conversion</small>
+                </div>
+                <div class="template-card" data-template="blog">
+                    <div class="template-icon">📝</div>
+                    <div class="template-name">Blog</div>
+                    <small style="color: #999;">Minimal</small>
+                </div>
+                <div class="template-card" data-template="ecommerce">
+                    <div class="template-icon">🛒</div>
+                    <div class="template-name">E-Commerce</div>
+                    <small style="color: #999;">Shop</small>
+                </div>
+            </div>
+        </div>
 
-<p class="risk">
-⚠ Market investments are subject to risk
-</p>
+        <!-- ============================================ -->
+        <!-- TAB 3: MY SITES -->
+        <!-- ============================================ -->
+        <div class="tab-content" id="tab-sites">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+                <h3 style="color: #444;">📋 My Hosted Sites</h3>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-secondary" onclick="loadSites()">🔄 Refresh</button>
+                    <button class="btn-secondary" onclick="clearAllSites()">🗑️ Clear All</button>
+                </div>
+            </div>
+            <div class="site-list" id="siteList">
+                <div class="empty-sites">Loading...</div>
+            </div>
+        </div>
 
-<!-- CLEAN FOOTER -->
-<div class="footer">
-Powered by 
-<a href="https://t.me/+3XoqJNLxYHswNTc1" target="_blank">
-AdsBuild Agency
-</a>
-</div>
-<!-- Meta Pixel Code -->
-<script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
-fbq('init', '1182530467359705');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1182530467359705&ev=PageView&noscript=1"
-/></noscript>
-<!-- End Meta Pixel Code -->
-</div>
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-number" id="totalSites">0</span>
+                <span class="stat-label">Total Sites</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" style="color: #28a745;">●</span>
+                <span class="stat-label">Live</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-number" style="color: #17a2b8;">100MB</span>
+                <span class="stat-label">Max File Size</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- MODAL FOR EDITING -->
+    <!-- ============================================ -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <h2>✏️ Edit Landing Page: <span id="editSubdomain"></span></h2>
+            <textarea id="editHtmlContent"></textarea>
+            <div class="modal-actions">
+                <button class="btn-close" onclick="closeEditModal()">❌ Cancel</button>
+                <button class="btn-save" onclick="saveEdit()">💾 Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- JAVASCRIPT - Complete Functionality -->
+    <!-- ============================================ -->
+    <script>
+        // ============================================
+        // CONFIGURATION
+        // ============================================
+        const STORAGE_KEY = 'hosted_sites';
+        let editingSubdomain = null;
+
+        // ============================================
+        // TAB SWITCHING
+        // ============================================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                const tabName = this.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                document.getElementById('tab-' + tabName).classList.add('active');
+
+                if (tabName === 'sites') {
+                    loadSites();
+                }
+            });
+        });
+
+        // ============================================
+        // URL PREVIEW
+        // ============================================
+        document.getElementById('subdomain').addEventListener('input', function() {
+            const val = this.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+            const preview = document.getElementById('urlPreview');
+            const domain = window.location.hostname;
+            const port = window.location.port ? ':' + window.location.port : '';
+            preview.textContent = `${window.location.protocol}//${domain}${port}/${val || 'your-site'}`;
+        });
+
+        // ============================================
+        // FILE UPLOAD HANDLER
+        // ============================================
+        const fileInput = document.getElementById('fileInput');
+        const dropZone = document.getElementById('dropZone');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = this.files[0];
+            if (file) {
+                document.getElementById('fileName').style.display = 'block';
+                const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+                document.getElementById('fileLabel').textContent = file.name + ' (' + sizeMB + ' MB)';
+                
+                // Read file content if it's HTML
+                if (file.name.endsWith('.html') || file.name.endsWith('.htm')) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById('htmlEditor').value = event.target.result;
+                    };
+                    reader.readAsText(file);
+                }
+            }
+        });
+
+        // Drag & Drop
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+            });
+        });
+
+        // ============================================
+        // TEMPLATES
+        // ============================================
+        const TEMPLATES = {
+            business: `<!DOCTYPE html>
+        <html>
+        <head>
+            <title>Business Landing</title>
+            <style>
+                * { margin:0; padding:0; box-sizing:border-box; }
+                body { font-family: Arial, sans-serif; background: #f4f4f4; }
+                .hero { background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 80px 20px; text-align: center; }
+                .hero h1 { font-size: 3rem; margin-bottom: 20px; }
+                .hero p { font-size: 1.2rem; max-width: 600px; margin: 0 auto 30px; }
+                .btn { background: white; color: #764ba2; padding: 15px 40px; border-radius: 30px; text-decoration: none; font-weight: 700; display: inline-block; }
+                .features { padding: 60px 20px; max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px,1fr)); gap: 30px; }
+                .feature { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); text-align: center; }
+                .feature h3 { color: #764ba2; margin-bottom: 10px; }
+            </style>
+        </head>
+        <body>
+            <div class="hero">
+                <h1>🚀 Business Landing</h1>
+                <p>Your professional business presence online. Ready to grow your audience.</p>
+                <a href="#" class="btn">Get Started</a>
+            </div>
+            <div class="features">
+                <div class="feature"><h3>📊 Analytics</h3><p>Track your visitors</p></div>
+                <div class="feature"><h3>⚡ Fast</h3><p>Lightning speed</p></div>
+                <div class="feature"><h3>🔒 Secure</h3><p>SSL protected</p></div>
+            </div>
+        </body>
+        </html>`,
+
+            portfolio: `<!DOCTYPE html>
+        <html>
+        <head>
+            <title>Portfolio</title>
+            <style>
+                * { margin:0; padding:0; box-sizing:border-box; }
+                body { font-family: 'Segoe UI', sans-serif; background: #0a0a0a; color: white; }
+                .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+                .header { text-align: center; padding: 60px 0; }
+                .header h1 { font-size: 3.5rem; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+                .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 30px; }
+                .card { background: #1a1a1a; border-radius: 12px; padding: 30px; text-align: center; border: 1px solid #333; transition: transform 0.3s; }
+                .card:hover { transform: translateY(-10px); border-color: #764ba2; }
+                .card .icon { font-size: 3rem; margin-bottom: 15px; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header"><h1>🎨 My Portfolio</h1><p style="color:#888; margin-top:10px;">Creative work, unique designs</p></div>
+                <div class="grid">
+                    <div class="card"><div class="icon">🎯</div><h3>Project 1</h3><p style="color:#888;">Web Design</p></div>
+                    <div class="card"><div class="icon">🎨</div><h3>Project 2</h3><p style="color:#888;">UI/UX</p></div>
+                    <div class="card"><div class="icon">🚀</div><h3>Project 3</h3><p style="color:#888;">Development</p></div>
+                </div>
+            </div>
+        </body>
+        </html>`,
+
+            startup: `<!DOCTYPE html>
+        <html>
+        <head>
+            <title>Startup</title>
+            <style>
+                * { margin:0; padding:0; box-sizing:border-box; }
+                body { font-family: 'Segoe UI', sans-serif; background: white; }
+                .hero { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); padding: 100px 20px; text-align: center; color: white; }
+                .hero h1 { font-size: 4rem; margin-bottom: 20px; }
+                .hero p { font-size: 1.3rem; opacity: 0.9; }
+                .cta { display: inline-block; background: white; color: #f5576c; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 700; margin-top: 20px; }
+            </style>
+        </head>
+        <body>
+            <div class="hero">
+                <h1>🚀 Startup</h1>
+                <p>Launch your idea. Build your future.</p>
+                <a href="#" class="cta">Join Waitlist</a>
+            </div>
+        </body>
+        </html>`,
+
+            landing: `<!DOCTYPE html>
+        <html>
+        <head>
+            <title>Landing Page</title>
+            <style>
+                * { margin:0; padding:0; box-sizing:border-box; }
+                body { font-family: 'Segoe UI', sans-serif; background: #1a1a2e; color: white; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin:0; }
+                .card { background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); padding: 60px; border-radius: 20px; text-align: center; max-width: 500px; border: 1px solid rgba(255,255,255,0.1); }
+                .card h1 { font-size: 2.5rem; margin-bottom: 15px; }
+                .card p { color: #aaa; margin-bottom: 30px; }
+                .input-group { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+                .input-group input { flex: 1; min-width: 200px; padding: 12px 20px; border-radius: 8px; border: none; }
+                .input-group button { padding: 12px 30px; border-radius: 8px; border: none; background: #667eea; color: white; font-weight: 700; cursor: pointer; }
+            </style>
+        </head>
+        <body>
+            <div class="card">
+                <h1>📱 Landing</h1>
+                <p>Subscribe to get updates</p>
+                <div class="input-group">
+                    <input type="email" placeholder="Your email">
+                    <button>Subscribe</button>
+                </div>
+            </div>
+        </body>
+        </html>`,
+
+            blog: `<!DOCTYPE html>
+        <html>
+        <head>
+            <title>Blog</title>
+            <style>
+                * { margin:0; padding:0; box-sizing:border-box; }
+                body { font-family: 'Georgia', serif; background: #fafafa; color: #333; }
+                .container { max-width: 800px; margin: 0 auto; padding: 40px 20px; }
+                .header { text-align: center; padding: 40px 0; }
+                .header h1 { font-size: 2.5rem; }
+                .post { background: white; padding: 30px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+                .post h2 { color: #764ba2; }
+                .post .meta { color: #888; font-size: 0.9rem; margin: 10px 0; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header"><h1>📝 Blog</h1><p style="color:#888;">Thoughts & ideas</p></div>
+                <div class="post"><h2>Hello World</h2><div class="meta">July 25, 2026</div><p>Welcome to my blog. This is a sample post.</p></div>
+                <div class="post"><h2>Another Post</h2><div class="meta">July 24, 2026</div><p>More content coming soon...</p></div>
+            </div>
+        </body>
+        </html>`,
+
+            ecommerce: `<!DOCTYPE html>
+        <html>
+        <head>
+            <title>Shop</title>
+            <style>
+                * { margin:0; padding:0; box-sizing:border-box; }
+                body { font-family: 'Segoe UI', sans-serif; background: #f8f9fa; }
+                .header { background: white; padding: 20px 40px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+                .header h1 { color: #764ba2; }
+                .products { max-width: 1200px; margin: 40px auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(200px,1fr)); gap: 30px; padding: 0 20px; }
+                .product { background: white; padding: 20px; border-radius: 12px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+                .product .price { color: #764ba2; font-weight: 700; font-size: 1.2rem; margin: 10px 0; }
+                .product button { background: #764ba2; color: white; border: none; padding: 8px 20px; border-radius: 8px; cursor: pointer; }
+                .product button:hover { background: #5a3d8a; }
+            </style>
+        </head>
+        <body>
+            <div class="header"><h1>🛒 Shop</h1><span style="color:#888;">🛍️ Cart (0)</span></div>
+            <div class="products">
+                <div class="product"><h3>Product 1</h3><div class="price">$29.99</div><button>Add to Cart</button></div>
+                <div class="product"><h3>Product 2</h3><div class="price">$49.99</div><button>Add to Cart</button></div>
+                <div class="product"><h3>Product 3</h3><div class="price">$99.99</div><button>Add to Cart</button></div>
+            </div>
+        </body>
+        </html>`
+        };
+
+        // Template click handler
+        document.querySelectorAll('.template-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const templateName = this.dataset.template;
+                const html = TEMPLATES[templateName];
+                if (html) {
+                    document.getElementById('htmlEditor').value = html;
+                    document.querySelector('.tab-btn[data-tab="upload"]').click();
+                    showResult('✅ Template "' + templateName + '" loaded!', 'success');
+                }
+            });
+        });
+
+        // ============================================
+        // FORM SUBMIT
+        // ============================================
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const loader = document.getElementById('loader');
+            const result = document.getElementById('result');
+
+            const subdomain = document.getElementById('subdomain').value.trim();
+            const file = document.getElementById('fileInput').files[0];
+            const htmlContent = document.getElementById('htmlEditor').value.trim();
+
+            if (!subdomain) {
+                showResult('❌ Subdomain name likhna zaroori hai!', 'error');
+                return;
+            }
+
+            if (!file && !htmlContent) {
+                showResult('❌ Ya toh file upload karein ya HTML likhein!', 'error');
+                return;
+            }
+
+            const cleanSub = subdomain.toLowerCase().replace(/[^a-z0-9-]/g, '');
+            if (cleanSub.length < 2) {
+                showResult('❌ Subdomain kam se kam 2 characters ka ho!', 'error');
+                return;
+            }
+
+            // Check if subdomain already exists
+            const sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            if (sites.find(s => s.subdomain === cleanSub)) {
+                if (!confirm(`⚠️ "${cleanSub}" already exists. Overwrite?`)) {
+                    return;
+                }
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Deploying...';
+            loader.classList.add('active');
+            result.style.display = 'none';
+
+            try {
+                let finalHtml = htmlContent;
+
+                if (file) {
+                    if (file.name.endsWith('.html') || file.name.endsWith('.htm')) {
+                        // Read file content
+                        const reader = new FileReader();
+                        finalHtml = await new Promise((resolve) => {
+                            reader.onload = function(e) { resolve(e.target.result); };
+                            reader.readAsText(file);
+                        });
+                    } else if (file.name.endsWith('.zip')) {
+                        // For ZIP files, we create a landing page
+                        finalHtml = `<!DOCTYPE html>
+        <html>
+        <head>
+            <title>${cleanSub}</title>
+            <style>
+                body { font-family: Arial; display: flex; justify-content: center; align-items: center; height: 100vh; background: linear-gradient(135deg, #667eea, #764ba2); color: white; text-align: center; margin:0; }
+                .card { background: rgba(255,255,255,0.1); padding: 40px; border-radius: 20px; backdrop-filter: blur(10px); }
+                h1 { font-size: 2.5rem; }
+                small { opacity: 0.7; }
+            </style>
+        </head>
+        <body>
+            <div class="card">
+                <h1>🚀 ${cleanSub}</h1>
+                <p>ZIP file uploaded successfully!</p>
+                <small>${file.name} (${(file.size/1024/1024).toFixed(2)} MB)</small>
+            </div>
+        </body>
+        </html>`;
+                    }
+                }
+
+                // Save to localStorage
+                const existing = sites.find(s => s.subdomain === cleanSub);
+                if (existing) {
+                    existing.html = finalHtml;
+                    existing.date = new Date().toISOString();
+                } else {
+                    sites.push({
+                        subdomain: cleanSub,
+                        html: finalHtml,
+                        date: new Date().toISOString()
+                    });
+                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+
+                const url = `${window.location.origin}/site/${cleanSub}`;
+                window._pages = window._pages || {};
+                window._pages[cleanSub] = finalHtml;
+
+                showResult(`
+                    ✅ <strong>Success!</strong> Landing page live ho gaya!<br><br>
+                    🔗 <a href="${url}" target="_blank">${url}</a><br>
+                    <small style="display:block; margin-top:10px;">📋 Copy karein aur share karein!</small>
+                `, 'success');
+
+                // Clear form
+                document.getElementById('htmlEditor').value = '';
+                document.getElementById('fileInput').value = '';
+                document.getElementById('fileName').style.display = 'none';
+                document.getElementById('subdomain').value = '';
+                loadSites();
+                updateStats();
+
+            } catch (error) {
+                showResult('❌ Error: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Free Host Karo!';
+                loader.classList.remove('active');
+            }
+        });
+
+        // ============================================
+        // LOCAL STORAGE HELPERS
+        // ============================================
+        function loadSites() {
+            const sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const siteList = document.getElementById('siteList');
+            const totalSites = document.getElementById('totalSites');
+
+            totalSites.textContent = sites.length;
+
+            if (sites.length === 0) {
+                siteList.innerHTML = '<div class="empty-sites">No sites hosted yet. Upload your first one! 🚀</div>';
+                return;
+            }
+
+            siteList.innerHTML = sites.map((site, index) => `
+                <div class="site-item">
+                    <div class="site-info">
+                        <span>🚀</span>
+                        <a href="${window.location.origin}/site/${site.subdomain}" target="_blank" class="site-url">${site.subdomain}</a>
+                        <small style="color:#888;">${new Date(site.date).toLocaleDateString()}</small>
+                    </div>
+                    <div class="site-actions">
+                        <a href="${window.location.origin}/site/${site.subdomain}" target="_blank" class="btn-secondary" style="padding:4px 12px; text-decoration:none;">🔗 Visit</a>
+                        <button class="btn-edit" onclick="openEditModal('${site.subdomain}')">✏️ Edit</button>
+                        <button class="btn-danger" onclick="deleteSite('${site.subdomain}')">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteSite(subdomain) {
+            if (!confirm(`Kya aap "${subdomain}" ko delete karna chahte hain?`)) return;
+
+            let sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            sites = sites.filter(s => s.subdomain !== subdomain);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+
+            if (window._pages) delete window._pages[subdomain];
+
+            showResult(`✅ "${subdomain}" delete ho gaya!`, 'info');
+            loadSites();
+            updateStats();
+        }
+
+        function clearAllSites() {
+            if (!confirm('Kya aap ALL sites delete karna chahte hain?')) return;
+            localStorage.setItem(STORAGE_KEY, '[]');
+            window._pages = {};
+            showResult('✅ All sites deleted!', 'info');
+            loadSites();
+            updateStats();
+        }
+
+        function updateStats() {
+            const sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            document.getElementById('totalSites').textContent = sites.length;
+        }
+
+        // ============================================
+        // EDIT MODAL
+        // ============================================
+        function openEditModal(subdomain) {
+            const sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const site = sites.find(s => s.subdomain === subdomain);
+
+            if (!site) {
+                showResult('❌ Site not found!', 'error');
+                return;
+            }
+
+            editingSubdomain = subdomain;
+            document.getElementById('editSubdomain').textContent = subdomain;
+            document.getElementById('editHtmlContent').value = site.html || '';
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+            editingSubdomain = null;
+        }
+
+        function saveEdit() {
+            const newHtml = document.getElementById('editHtmlContent').value;
+
+            if (!editingSubdomain) {
+                showResult('❌ No site selected!', 'error');
+                return;
+            }
+
+            let sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const site = sites.find(s => s.subdomain === editingSubdomain);
+
+            if (site) {
+                site.html = newHtml;
+                site.date = new Date().toISOString();
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+
+                if (window._pages) {
+                    window._pages[editingSubdomain] = newHtml;
+                }
+
+                showResult(`✅ "${editingSubdomain}" updated successfully!`, 'success');
+                closeEditModal();
+                loadSites();
+            } else {
+                showResult('❌ Site not found!', 'error');
+            }
+        }
+
+        // Close modal on overlay click
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeEditModal();
+            }
+        });
+
+        // ============================================
+        // SHOW RESULT
+        // ============================================
+        function showResult(message, type) {
+            const result = document.getElementById('result');
+            result.className = type;
+            result.innerHTML = message;
+            result.style.display = 'block';
+            clearTimeout(result._timeout);
+            result._timeout = setTimeout(() => {
+                result.style.display = 'none';
+            }, 30000);
+        }
+
+        // ============================================
+        // ROUTE HANDLER FOR SITES
+        // ============================================
+        (function setupRouter() {
+            const originalPushState = history.pushState;
+            history.pushState = function(...args) {
+                originalPushState.apply(this, args);
+                checkRoute();
+            };
+
+            window.addEventListener('popstate', checkRoute);
+
+            function checkRoute() {
+                const path = window.location.pathname;
+                const match = path.match(/^\/site\/([a-z0-9-]+)$/);
+                if (match) {
+                    const subdomain = match[1];
+                    const sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                    const site = sites.find(s => s.subdomain === subdomain);
+                    if (site && site.html) {
+                        document.body.innerHTML = site.html;
+                        return;
+                    }
+                }
+            }
+
+            setTimeout(checkRoute, 100);
+        })();
+
+        // ============================================
+        // KEYBOARD SHORTCUTS
+        // ============================================
+        document.addEventListener('keydown', function(e) {
+            // Escape to close modal
+            if (e.key === 'Escape') {
+                closeEditModal();
+            }
+            // Ctrl+S to save edit
+            if (e.ctrlKey && e.key === 's') {
+                if (document.getElementById('editModal').classList.contains('active')) {
+                    e.preventDefault();
+                    saveEdit();
+                }
+            }
+        });
+
+        // ============================================
+        // INIT
+        // ============================================
+        loadSites();
+        updateStats();
+
+        console.log('🚀 Free Host Platform Loaded!');
+        console.log('📊 Total Sites:', JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').length);
+        console.log('💡 Upload a landing page to get started!');
+        console.log('✏️ Edit any site by clicking "Edit" button');
+        console.log('⌨️ Press Ctrl+S to save when editing');
+    </script>
 
 </body>
 </html>
