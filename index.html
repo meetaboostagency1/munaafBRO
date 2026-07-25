@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 Free Host - Systeme.io Style</title>
+    <title>🚀 Free Host - Landing Page Hosting</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
-        .container { max-width: 1100px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: slideUp 0.6s ease-out; }
+        .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: slideUp 0.6s ease-out; }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .header { text-align: center; margin-bottom: 30px; }
         .header h1 { font-size: 2.8rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -99,10 +99,9 @@
         .subdomain-auto h4 { color: #17a2b8; margin-bottom: 5px; }
         .subdomain-auto p { color: #555; font-size: 0.9rem; }
         .subdomain-auto code { background: white; padding: 2px 8px; border-radius: 4px; color: #17a2b8; font-weight: 600; }
-        .systeme-banner { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 12px; padding: 20px; margin-bottom: 20px; text-align: center; }
-        .systeme-banner h3 { font-size: 1.5rem; margin-bottom: 5px; }
-        .systeme-banner p { opacity: 0.9; }
-        .systeme-banner code { background: rgba(255,255,255,0.2); padding: 2px 10px; border-radius: 4px; font-weight: 600; }
+        .fix-banner { background: #d4edda; border: 2px solid #28a745; border-radius: 12px; padding: 15px; margin-bottom: 20px; text-align: center; }
+        .fix-banner h4 { color: #155724; }
+        .fix-banner code { background: white; padding: 2px 8px; border-radius: 4px; color: #155724; font-weight: 600; }
         @media (max-width: 600px) { .container { padding: 20px; } .header h1 { font-size: 1.8rem; } .stats { flex-direction: column; align-items: center; } .tab-btn { flex: 1; text-align: center; padding: 8px 12px; font-size: 0.9rem; min-width: 80px; } .site-item { flex-direction: column; align-items: flex-start; } .site-item .site-actions { width: 100%; justify-content: flex-start; } }
     </style>
 </head>
@@ -111,19 +110,16 @@
     <div class="container">
         <div class="header">
             <h1>🚀 Free Host</h1>
-            <p>Apni landing page <strong>FREE</strong> mein host karein — Systeme.io Style</p>
+            <p>Apni landing page <strong>FREE</strong> mein host karein</p>
             <span class="badge">⚡ 100% Free</span>
-            <span class="domain-badge">🌐 Custom Domain Ready</span>
+            <span class="domain-badge">🌐 munaaf-bro.vercel.app</span>
         </div>
 
-        <!-- Systeme.io Style Banner -->
-        <div class="systeme-banner">
-            <h3>🚀 Systeme.io Style Hosting</h3>
-            <p>Your domain: <code id="mainDomainDisplay">munaaf-bro.vercel.app</code></p>
-            <p style="font-size:0.9rem;margin-top:5px;">💡 To use custom domain, change <code>DOMAIN</code> variable in JavaScript</p>
+        <div class="fix-banner">
+            <h4>✅ 404 Error Fixed!</h4>
+            <p>All links now work: <code>/site/anything</code> → <code>index.html</code></p>
         </div>
 
-        <!-- Login Section -->
         <div class="login-section" id="loginSection">
             <div class="user-info" id="userInfo" style="display:none;">
                 <div class="user-avatar" id="userAvatar">G</div>
@@ -136,17 +132,15 @@
             </div>
         </div>
 
-        <!-- Auto Subdomain Info -->
         <div class="subdomain-auto" id="subdomainAuto" style="display:none;">
             <h4>🔗 Your Auto-Generated Subdomain</h4>
-            <p>Your unique URL: <code id="autoSubdomainLink">https://your-domain.com/site/yourname</code></p>
-            <small style="color:#999;">This subdomain is created from your Gmail username — like Systeme.io!</small>
+            <p>Your unique URL: <code id="autoSubdomainLink">https://munaaf-bro.vercel.app/site/yourname</code></p>
+            <small style="color:#999;">This subdomain is created from your Gmail username</small>
         </div>
 
-        <!-- Live Link Box -->
         <div class="live-link-box" id="liveLinkBox" style="display:none;">
             <h3>✅ Your Site is Live!</h3>
-            <a href="#" id="liveLink" target="_blank">https://your-domain.com/site/your-site</a>
+            <a href="#" id="liveLink" target="_blank">https://munaaf-bro.vercel.app/site/your-site</a>
             <br><br>
             <button onclick="copyLink()" class="btn-secondary">📋 Copy Link</button>
         </div>
@@ -163,8 +157,8 @@
                     <label for="subdomain">🔗 Choose Your URL</label>
                     <input type="text" id="subdomain" name="subdomain" placeholder="mypage" required>
                     <div class="example">
-                        💡 Your URL: <code id="urlPreview">https://your-domain.com/site/mypage</code>
-                        <br><small style="color:#999;">👉 Login ke baad auto subdomain milega — Systeme.io style!</small>
+                        💡 Your URL: <code id="urlPreview">https://munaaf-bro.vercel.app/site/mypage</code>
+                        <br><small style="color:#999;">👉 Login ke baad auto subdomain milega!</small>
                     </div>
                 </div>
 
@@ -238,26 +232,12 @@
 
     <script>
         // ============================================
-        // DOMAIN CONFIGURATION - CHANGE THIS TO YOUR DOMAIN
+        // GMAIL LOGIN + AUTO SUBDOMAIN
         // ============================================
-        // 👇 Apna domain yahan daalein (Systeme.io style)
-        const CUSTOM_DOMAIN = 'munaaf-bro.vercel.app'; // Change to your domain
-        
-        // Auto-detect domain
-        const DOMAIN = CUSTOM_DOMAIN || window.location.hostname;
-        const PROTOCOL = window.location.protocol || 'https://';
-        const STORAGE_KEY = 'systeme_style_sites';
         let currentUser = null;
-        let editingSubdomain = null;
 
-        // Update domain display
-        document.getElementById('mainDomainDisplay').textContent = DOMAIN;
-
-        // ============================================
-        // GMAIL LOGIN + AUTO SUBDOMAIN (Systeme.io Style)
-        // ============================================
         function loadUser() {
-            const saved = localStorage.getItem('systeme_user');
+            const saved = localStorage.getItem('freehost_user');
             if (saved) {
                 try {
                     currentUser = JSON.parse(saved);
@@ -277,10 +257,10 @@
                     avatar: email.charAt(0).toUpperCase(),
                     subdomain: username
                 };
-                localStorage.setItem('systeme_user', JSON.stringify(currentUser));
+                localStorage.setItem('freehost_user', JSON.stringify(currentUser));
                 updateUI();
                 showAutoSubdomain();
-                showResult('✅ Logged in as ' + email + ' — like Systeme.io!', 'success');
+                showResult('✅ Logged in as ' + email, 'success');
                 loadSites();
                 
                 createUserSubdomain(username);
@@ -290,16 +270,16 @@
         }
 
         function createUserSubdomain(username) {
-            let sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            let sites = JSON.parse(localStorage.getItem('hosted_sites') || '[]');
             if (!sites.find(s => s.subdomain === username)) {
                 sites.push({
                     subdomain: username,
-                    html: `<!DOCTYPE html><html><head><title>${username}</title><style>body{font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#667eea,#764ba2);color:white;text-align:center;margin:0;}.card{background:rgba(255,255,255,0.1);padding:50px;border-radius:20px;backdrop-filter:blur(10px);}h1{font-size:3rem;}.tag{display:inline-block;background:#28a745;padding:5px 15px;border-radius:20px;font-size:0.8rem;margin-top:10px;}</style></head><body><div class="card"><h1>🚀 ${username}</h1><p>Welcome to your free landing page — Systeme.io Style!</p><span class="tag">⚡ Live</span></div></body></html>`,
+                    html: `<!DOCTYPE html><html><head><title>${username}</title><style>body{font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#667eea,#764ba2);color:white;text-align:center;margin:0;}.card{background:rgba(255,255,255,0.1);padding:50px;border-radius:20px;backdrop-filter:blur(10px);}h1{font-size:3rem;}.tag{display:inline-block;background:#28a745;padding:5px 15px;border-radius:20px;font-size:0.8rem;margin-top:10px;}</style></head><body><div class="card"><h1>🚀 ${username}</h1><p>Welcome to your free landing page!</p><span class="tag">⚡ Live</span></div></body></html>`,
                     date: new Date().toISOString(),
                     user: currentUser.email
                 });
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
-                console.log(`✅ Auto-created subdomain: ${username} (Systeme.io style)`);
+                localStorage.setItem('hosted_sites', JSON.stringify(sites));
+                console.log(`✅ Auto-created subdomain: ${username}`);
             }
         }
 
@@ -308,8 +288,8 @@
             const link = document.getElementById('autoSubdomainLink');
             if (currentUser) {
                 div.style.display = 'block';
-                link.textContent = `${PROTOCOL}//${DOMAIN}/site/${currentUser.subdomain}`;
-                link.href = `${PROTOCOL}//${DOMAIN}/site/${currentUser.subdomain}`;
+                link.textContent = `${PROTOCOL}${DOMAIN}/site/${currentUser.subdomain}`;
+                link.href = `${PROTOCOL}${DOMAIN}/site/${currentUser.subdomain}`;
             } else {
                 div.style.display = 'none';
             }
@@ -317,7 +297,7 @@
 
         function logoutUser() {
             currentUser = null;
-            localStorage.removeItem('systeme_user');
+            localStorage.removeItem('freehost_user');
             updateUI();
             document.getElementById('subdomainAuto').style.display = 'none';
             showResult('✅ Logged out successfully!', 'info');
@@ -347,7 +327,15 @@
         }
 
         // ============================================
-        // ROUTE HANDLER - SYSTEME.IO STYLE
+        // DOMAIN CONFIGURATION
+        // ============================================
+        const DOMAIN = 'munaaf-bro.vercel.app';
+        const PROTOCOL = 'https://';
+        const STORAGE_KEY = 'hosted_sites';
+        let editingSubdomain = null;
+
+        // ============================================
+        // ROUTE HANDLER - FINAL FIX
         // ============================================
         (function() {
             const path = window.location.pathname;
@@ -416,10 +404,10 @@
 
         document.getElementById('subdomain').addEventListener('input', function() {
             const val = this.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
-            document.getElementById('urlPreview').textContent = `${PROTOCOL}//${DOMAIN}/site/${val || 'your-site'}`;
+            document.getElementById('urlPreview').textContent = `${PROTOCOL}${DOMAIN}/site/${val || 'your-site'}`;
         });
 
-        document.getElementById('urlPreview').textContent = `${PROTOCOL}//${DOMAIN}/site/your-site`;
+        document.getElementById('urlPreview').textContent = `${PROTOCOL}${DOMAIN}/site/your-site`;
 
         const fileInput = document.getElementById('fileInput');
         fileInput.addEventListener('change', function(e) {
@@ -452,7 +440,7 @@
         });
 
         // ============================================
-        // TEMPLATES (Same as before)
+        // TEMPLATES
         // ============================================
         const TEMPLATES = {
             business: `<!DOCTYPE html><html><head><title>Business</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial;background:#f4f4f4;}.hero{background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:80px 20px;text-align:center;}.hero h1{font-size:3rem;margin-bottom:20px;}.btn{background:white;color:#764ba2;padding:15px 40px;border-radius:30px;text-decoration:none;font-weight:700;display:inline-block;}.features{padding:60px 20px;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:30px;}.feature{background:white;padding:30px;border-radius:12px;box-shadow:0 5px 20px rgba(0,0,0,0.1);text-align:center;}.feature h3{color:#764ba2;}</style></head><body><div class="hero"><h1>🚀 Business</h1><p>Professional presence online.</p><a href="#" class="btn">Get Started</a></div><div class="features"><div class="feature"><h3>📊 Analytics</h3><p>Track visitors</p></div><div class="feature"><h3>⚡ Fast</h3><p>Lightning speed</p></div><div class="feature"><h3>🔒 Secure</h3><p>SSL protected</p></div></div></body></html>`,
@@ -490,13 +478,13 @@
         }
 
         // ============================================
-        // FORM SUBMIT - SYSTEME.IO STYLE
+        // FORM SUBMIT - CREATE SITE
         // ============================================
         document.getElementById('uploadForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             if (!currentUser) {
-                showResult('❌ Please login with Gmail first! (Like Systeme.io)', 'error');
+                showResult('❌ Please login with Gmail first!', 'error');
                 return;
             }
 
@@ -535,7 +523,7 @@
                             reader.readAsText(file);
                         });
                     } else {
-                        finalHtml = `<!DOCTYPE html><html><head><title>${cleanSub}</title><style>body{font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#667eea,#764ba2);color:white;text-align:center;margin:0;}.card{background:rgba(255,255,255,0.1);padding:40px;border-radius:20px;backdrop-filter:blur(10px);}h1{font-size:2.5rem;}</style></head><body><div class="card"><h1>🚀 ${cleanSub}</h1><p>Created by ${currentUser.email}</p><p style="opacity:0.7;">Systeme.io Style Hosting</p></div></body></html>`;
+                        finalHtml = `<!DOCTYPE html><html><head><title>${cleanSub}</title><style>body{font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#667eea,#764ba2);color:white;text-align:center;margin:0;}.card{background:rgba(255,255,255,0.1);padding:40px;border-radius:20px;backdrop-filter:blur(10px);}h1{font-size:2.5rem;}</style></head><body><div class="card"><h1>🚀 ${cleanSub}</h1><p>Created by ${currentUser.email}</p></div></body></html>`;
                     }
                 }
 
@@ -549,7 +537,7 @@
                 }
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
 
-                const url = `${PROTOCOL}//${DOMAIN}/site/${cleanSub}`;
+                const url = `${PROTOCOL}${DOMAIN}/site/${cleanSub}`;
 
                 const liveLinkBox = document.getElementById('liveLinkBox');
                 const liveLink = document.getElementById('liveLink');
@@ -558,7 +546,7 @@
                 liveLinkBox.style.display = 'block';
 
                 showResult(`
-                    ✅ <strong>Success!</strong> Landing page live ho gaya! (Systeme.io Style)<br><br>
+                    ✅ <strong>Success!</strong> Landing page live ho gaya!<br><br>
                     🔗 <strong>Your Link:</strong> <a href="${url}" target="_blank">${url}</a><br>
                     <small style="display:block;margin-top:10px;">📋 Copy karein aur share karein!</small>
                 `, 'success');
@@ -598,8 +586,8 @@
             if (sites.length === 0) {
                 siteList.innerHTML = `
                     <div class="empty-sites">
-                        ${currentUser ? 'No sites hosted yet. Upload your first one! 🚀' : 'Please login with Gmail to see your sites — Like Systeme.io!'}
-                        <br><small style="color:#999;">Domain: ${DOMAIN}</small>
+                        ${currentUser ? 'No sites hosted yet. Upload your first one! 🚀' : 'Please login with Gmail to see your sites'}
+                        <br><small style="color:#999;">Domain: munaaf-bro.vercel.app</small>
                     </div>
                 `;
                 return;
@@ -609,12 +597,12 @@
                 <div class="site-item">
                     <div class="site-info">
                         <span>🚀</span>
-                        <a href="${PROTOCOL}//${DOMAIN}/site/${site.subdomain}" target="_blank" class="site-url">${site.subdomain}</a>
+                        <a href="${PROTOCOL}${DOMAIN}/site/${site.subdomain}" target="_blank" class="site-url">${site.subdomain}</a>
                         <small style="color:#888;">${new Date(site.date).toLocaleDateString()}</small>
                         ${site.user ? `<small style="color:#17a2b8;">👤 ${site.user.split('@')[0]}</small>` : ''}
                     </div>
                     <div class="site-actions">
-                        <a href="${PROTOCOL}//${DOMAIN}/site/${site.subdomain}" target="_blank" class="btn-secondary" style="padding:4px 12px;text-decoration:none;">🔗 Visit</a>
+                        <a href="${PROTOCOL}${DOMAIN}/site/${site.subdomain}" target="_blank" class="btn-secondary" style="padding:4px 12px;text-decoration:none;">🔗 Visit</a>
                         ${currentUser && site.user === currentUser.email ? `
                             <button class="btn-edit" onclick="openEditModal('${site.subdomain}')">✏️ Edit</button>
                             <button class="btn-danger" onclick="deleteSite('${site.subdomain}')">🗑️</button>
@@ -742,7 +730,7 @@
 
             if (added > 0) {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
-                console.log(`✅ Added ${added} default sites (Systeme.io style)`);
+                console.log(`✅ Added ${added} default sites`);
             }
         }
 
@@ -754,12 +742,13 @@
         loadSites();
         updateStats();
 
-        console.log('🚀 Systeme.io Style Hosting Loaded!');
+        console.log('🚀 Free Host Loaded!');
         console.log('🌐 Domain:', DOMAIN);
         console.log('📊 Total Sites:', JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').length);
         console.log('👤 User:', currentUser ? currentUser.email : 'Not logged in');
+        console.log('🔗 Try: https://munaaf-bro.vercel.app/site/jj');
+        console.log('🔗 Try: https://munaaf-bro.vercel.app/site/adbuilagency');
         console.log('🔗 All links now work! Try: /site/anything');
-        console.log('💡 To change domain, edit CUSTOM_DOMAIN variable');
     </script>
 
 </body>
