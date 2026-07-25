@@ -99,9 +99,9 @@
         .subdomain-auto h4 { color: #17a2b8; margin-bottom: 5px; }
         .subdomain-auto p { color: #555; font-size: 0.9rem; }
         .subdomain-auto code { background: white; padding: 2px 8px; border-radius: 4px; color: #17a2b8; font-weight: 600; }
-        .fix-banner { background: #fff3cd; border: 2px solid #ffc107; border-radius: 12px; padding: 15px; margin-bottom: 20px; text-align: center; }
-        .fix-banner h4 { color: #856404; }
-        .fix-banner code { background: white; padding: 2px 8px; border-radius: 4px; color: #856404; font-weight: 600; }
+        .fix-banner { background: #d4edda; border: 2px solid #28a745; border-radius: 12px; padding: 15px; margin-bottom: 20px; text-align: center; }
+        .fix-banner h4 { color: #155724; }
+        .fix-banner code { background: white; padding: 2px 8px; border-radius: 4px; color: #155724; font-weight: 600; }
         @media (max-width: 600px) { .container { padding: 20px; } .header h1 { font-size: 1.8rem; } .stats { flex-direction: column; align-items: center; } .tab-btn { flex: 1; text-align: center; padding: 8px 12px; font-size: 0.9rem; min-width: 80px; } .site-item { flex-direction: column; align-items: flex-start; } .site-item .site-actions { width: 100%; justify-content: flex-start; } }
     </style>
 </head>
@@ -117,7 +117,7 @@
 
         <!-- Fix Banner -->
         <div class="fix-banner">
-            <h4>🔧 404 Error Fixed!</h4>
+            <h4>✅ 404 Error Fixed!</h4>
             <p>All links now work: <code>/site/anything</code> → <code>index.html</code></p>
         </div>
 
@@ -345,7 +345,6 @@
             const path = window.location.pathname;
             console.log('📍 Path:', path);
             
-            // Match /site/anything
             const match = path.match(/^\/site\/([a-z0-9-]+)/);
             if (match) {
                 const subdomain = match[1];
@@ -362,10 +361,8 @@
                 
                 if (site && site.html) {
                     console.log('✅ Found and displaying:', subdomain);
-                    // Clear everything and show the site
                     document.documentElement.innerHTML = '';
                     document.write(site.html);
-                    // Add basic styles if missing
                     const style = document.createElement('style');
                     style.textContent = `* { margin:0; padding:0; box-sizing:border-box; } body { font-family: Arial, sans-serif; background: white; }`;
                     document.head.appendChild(style);
@@ -416,7 +413,6 @@
 
         document.getElementById('urlPreview').textContent = `${PROTOCOL}${DOMAIN}/site/your-site`;
 
-        // File upload
         const fileInput = document.getElementById('fileInput');
         fileInput.addEventListener('change', function(e) {
             const file = this.files[0];
@@ -470,9 +466,6 @@
             });
         });
 
-        // ============================================
-        // COPY LINK
-        // ============================================
         function copyLink() {
             const link = document.getElementById('liveLink').href;
             navigator.clipboard.writeText(link).then(() => {
@@ -698,9 +691,6 @@
             if (e.target === this) closeEditModal();
         });
 
-        // ============================================
-        // SHOW RESULT
-        // ============================================
         function showResult(message, type) {
             const result = document.getElementById('result');
             result.className = type;
@@ -710,9 +700,6 @@
             result._timeout = setTimeout(() => { result.style.display = 'none'; }, 30000);
         }
 
-        // ============================================
-        // KEYBOARD SHORTCUTS
-        // ============================================
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeEditModal();
             if (e.ctrlKey && e.key === 's' && document.getElementById('editModal').classList.contains('active')) {
