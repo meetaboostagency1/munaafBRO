@@ -327,4 +327,721 @@
             try {
                 const payload = { action, ...data };
                 const response = await fetch(SHEET_API_URL, {
-                    method
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                return await response.json();
+            } catch(error) {
+                console.error('API Error:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        // ============================================
+        // BACKUP & RESTORE
+        // ============================================
+        function backupData() {
+            const data = {
+                sites: localStorage.getItem(STORAGE_KEY),
+                users: localStorage.getItem(USERS_KEY),
+                user: localStorage.getItem('freehost_user'),
+                timestamp: new Date().toISOString()
+            };
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `freehost_backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            showResult('✅ Data backed up successfully!', 'success');
+        }
+
+        function restoreData() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.json';
+            input.onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        if (data.sites) localStorage.setItem(STORAGE_KEY, data.sites);
+                        if (data.users) localStorage.setItem(USERS_KEY, data.users);
+                        if (data.user) localStorage.setItem('freehost_user', data.user);
+                        showResult('✅ Data restored successfully! Refreshing...', 'success');
+                        setTimeout(() => location.reload(), 2000);
+                    } catch(err) {
+                        showResult('❌ Invalid backup file!', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            };
+            input.click();
+        }
+
+        // ============================================
+        // AUTHENTICATION WITH GOOGLE SHEETS
+        // ============================================
+        function loadUser() {
+            const saved = localStorage.getItem('freehost_user');
+            if (saved) {
+                try {
+                    currentUser = JSON.parse(saved);
+                    updateUI();
+                    showAutoSubdomain();
+                } catch(e) {}
+            }
+        }
+
+        function getUsers() {
+            try {
+                return JSON.parse(localStorage.getItem(USERS_KEY) || '{}');
+            } catch(e) {
+                return {};
+            }
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem(USERS_KEY, JSON.stringify(users));
+        }
+
+        function openRegisterModal() {
+            isLoginMode = false;
+            document.getElementById('authTitle').textContent = '📝 Register';
+            document.getElementById('authSubmitBtn').textContent = '📝 Register';
+            document.getElementById('authSwitchText').textContent = 'Already have an account? ';
+            document.getElementById('authSwitchLink').textContent = 'Login here';
+            document.getElementById('authModal').classList.add('active');
+            document.getElementById('authEmail').value = '';
+            document.getElementById('authPassword').value = '';
+        }
+
+        function openLoginModal() {
+            isLoginMode = true;
+            document.getElementById('authTitle').textContent = '🔑 Login';
+            document.getElementById('authSubmitBtn').textContent = '🔑 Login';
+            document.getElementById('authSwitchText').textContent = "Don't have an account? ";
+            document.getElementById('authSwitchLink').textContent = 'Register here';
+            document.getElementById('authModal').classList.add('active');
+            document.getElementById('authEmail').value = '';
+            document.getElementById('authPassword').value = '';
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.remove('active');
+        }
+
+        function switchAuthMode() {
+            if (isLoginMode) {
+                openRegisterModal();
+            } else {
+                openLoginModal();
+            }
+        }
+
+        function openForgotModal() {
+            closeAuthModal();
+            document.getElementById('forgotModal').classList.add('active');
+            document.getElementById('forgotEmail').value = '';
+            document.getElementById('forgotNewPassword').value = '';
+        }
+
+        function closeForgotModal() {
+            document.getElementById('forgotModal').classList.remove('active');
+        }
+
+        function handleForgot(e) {
+            e.preventDefault();
+            const email = document.getElementById('forgotEmail').value.trim();
+            const newPassword = document.getElementById('forgotNewPassword').value.trim();
+
+            if (!email || !newPassword) {
+                showResult('❌ Please fill all fields!', 'error');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                showResult('❌ Password must be at least 6 characters!', 'error');
+                return;
+            }
+
+            showResult('⏳ Please wait...', 'info');
+
+            callSheetAPI('reset', { email, newPassword }).then(response => {
+                if (response.success) {
+                    showResult('✅ Password updated successfully! Please login.', 'success');
+                    closeForgotModal();
+                    openLoginModal();
+                } else {
+                    showResult('❌ ' + (response.error || 'Reset failed!'), 'error');
+                }
+            }).catch(err => {
+                showResult('❌ Error: ' + err.message, 'error');
+            });
+        }
+
+        function handleAuth(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value.trim();
+            const password = document.getElementById('authPassword').value.trim();
+
+            if (!email || !password) {
+                showResult('❌ Please fill all fields!', 'error');
+                return;
+            }
+
+            if (password.length < 6) {
+                showResult('❌ Password must be at least 6 characters!', 'error');
+                return;
+            }
+
+            showResult('⏳ Please wait...', 'info');
+
+            if (isLoginMode) {
+                // Login via Google Sheets
+                callSheetAPI('login', { email, password }).then(response => {
+                    if (response.success) {
+                        currentUser = {
+                            email: email,
+                            name: email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, ''),
+                            avatar: email.charAt(0).toUpperCase(),
+                            subdomain: email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, '')
+                        };
+                        localStorage.setItem('freehost_user', JSON.stringify(currentUser));
+                        updateUI();
+                        showAutoSubdomain();
+                        closeAuthModal();
+                        showResult('✅ Logged in as ' + email, 'success');
+                        loadSites();
+                        createUserSubdomain(currentUser.subdomain);
+                    } else {
+                        showResult('❌ ' + (response.error || 'Login failed!'), 'error');
+                    }
+                }).catch(err => {
+                    showResult('❌ Error: ' + err.message, 'error');
+                });
+
+            } else {
+                // Register via Google Sheets
+                callSheetAPI('register', { email, password }).then(response => {
+                    if (response.success) {
+                        currentUser = {
+                            email: email,
+                            name: email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, ''),
+                            avatar: email.charAt(0).toUpperCase(),
+                            subdomain: email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, '')
+                        };
+                        localStorage.setItem('freehost_user', JSON.stringify(currentUser));
+                        updateUI();
+                        showAutoSubdomain();
+                        closeAuthModal();
+                        showResult('✅ Registration successful! Logged in as ' + email, 'success');
+                        loadSites();
+                        createUserSubdomain(currentUser.subdomain);
+                    } else {
+                        showResult('❌ ' + (response.error || 'Registration failed!'), 'error');
+                    }
+                }).catch(err => {
+                    showResult('❌ Error: ' + err.message, 'error');
+                });
+            }
+        }
+
+        document.getElementById('authModal').addEventListener('click', function(e) {
+            if (e.target === this) closeAuthModal();
+        });
+
+        document.getElementById('forgotModal').addEventListener('click', function(e) {
+            if (e.target === this) closeForgotModal();
+        });
+
+        // ============================================
+        // USER FUNCTIONS
+        // ============================================
+        function createUserSubdomain(username) {
+            let sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            if (!sites.find(s => s.subdomain === username)) {
+                sites.push({
+                    subdomain: username,
+                    html: `<!DOCTYPE html><html><head><title>${username}</title><style>body{font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#667eea,#764ba2);color:white;text-align:center;margin:0;}.card{background:rgba(255,255,255,0.1);padding:50px;border-radius:20px;backdrop-filter:blur(10px);}h1{font-size:3rem;}.tag{display:inline-block;background:#28a745;padding:5px 15px;border-radius:20px;font-size:0.8rem;margin-top:10px;}</style></head><body><div class="card"><h1>🚀 ${username}</h1><p>Welcome to your free landing page!</p><span class="tag">⚡ Live</span></div></body></html>`,
+                    date: new Date().toISOString(),
+                    user: currentUser.email
+                });
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+                console.log(`✅ Auto-created subdomain: ${username}`);
+            }
+        }
+
+        function showAutoSubdomain() {
+            const div = document.getElementById('subdomainAuto');
+            const link = document.getElementById('autoSubdomainLink');
+            if (currentUser) {
+                div.style.display = 'block';
+                link.textContent = `${PROTOCOL}//${DOMAIN}/site/${currentUser.subdomain}`;
+                link.href = `${PROTOCOL}//${DOMAIN}/site/${currentUser.subdomain}`;
+            } else {
+                div.style.display = 'none';
+            }
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem('freehost_user');
+            updateUI();
+            document.getElementById('subdomainAuto').style.display = 'none';
+            showResult('✅ Logged out successfully!', 'info');
+            loadSites();
+        }
+
+        function updateUI() {
+            const userInfo = document.getElementById('userInfo');
+            const loginBtn = document.getElementById('loginBtn');
+            const registerBtn = document.getElementById('registerBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            const userEmail = document.getElementById('userEmail');
+            const userAvatar = document.getElementById('userAvatar');
+
+            if (currentUser) {
+                userInfo.style.display = 'flex';
+                loginBtn.style.display = 'none';
+                registerBtn.style.display = 'none';
+                logoutBtn.style.display = 'inline-block';
+                userEmail.textContent = currentUser.email;
+                userAvatar.textContent = currentUser.avatar || 'G';
+                document.getElementById('userStat').textContent = '👤 ' + currentUser.name;
+            } else {
+                userInfo.style.display = 'none';
+                loginBtn.style.display = 'inline-block';
+                registerBtn.style.display = 'inline-block';
+                logoutBtn.style.display = 'none';
+                document.getElementById('userStat').textContent = '👤 Not logged in';
+            }
+        }
+
+        // ============================================
+        // ROUTE HANDLER
+        // ============================================
+        (function() {
+            const path = window.location.pathname;
+            console.log('📍 Path:', path);
+            
+            const match = path.match(/^\/site\/([a-z0-9-]+)/);
+            if (match) {
+                const subdomain = match[1];
+                console.log('🔍 Looking for site:', subdomain);
+                
+                let sites = [];
+                try {
+                    sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+                } catch(e) {
+                    console.error('Error reading localStorage:', e);
+                }
+                
+                const site = sites.find(s => s.subdomain === subdomain);
+                
+                if (site && site.html) {
+                    console.log('✅ Found and displaying:', subdomain);
+                    document.documentElement.innerHTML = '';
+                    document.write(site.html);
+                    const style = document.createElement('style');
+                    style.textContent = `* { margin:0; padding:0; box-sizing:border-box; } body { font-family: Arial, sans-serif; background: white; }`;
+                    document.head.appendChild(style);
+                    return;
+                } else {
+                    console.log('❌ Site not found:', subdomain);
+                    document.body.innerHTML = `
+                        <div style="text-align:center;padding:80px 20px;font-family:Arial;max-width:600px;margin:0 auto;">
+                            <h1 style="font-size:4rem;color:#764ba2;">🚀</h1>
+                            <h2 style="color:#333;margin:20px 0;">Site Not Found</h2>
+                            <p style="color:#666;margin:20px 0;">"<strong>${subdomain}</strong>" does not exist</p>
+                            <div style="background:#f8f9fa;padding:20px;border-radius:12px;margin:20px 0;text-align:left;">
+                                <p style="color:#555;">💡 <strong>Create this site now:</strong></p>
+                                <ol style="color:#555;text-align:left;padding-left:20px;margin:10px 0;">
+                                    <li>Go to <a href="/" style="color:#764ba2;">Home</a></li>
+                                    <li>Register or Login</li>
+                                    <li>Upload HTML or use template</li>
+                                    <li>Click "Free Host Karo!"</li>
+                                </ol>
+                            </div>
+                            <a href="/" style="display:inline-block;background:#764ba2;color:white;padding:12px 30px;border-radius:8px;text-decoration:none;font-weight:600;margin-top:10px;">🏠 Go to Home</a>
+                        </div>
+                    `;
+                    return;
+                }
+            }
+        })();
+
+        // ============================================
+        // REST OF THE JAVASCRIPT
+        // ============================================
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const tabName = this.dataset.tab;
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                document.getElementById('tab-' + tabName).classList.add('active');
+                if (tabName === 'sites') loadSites();
+            });
+        });
+
+        document.getElementById('subdomain').addEventListener('input', function() {
+            const val = this.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
+            document.getElementById('urlPreview').textContent = `${PROTOCOL}//${DOMAIN}/site/${val || 'your-site'}`;
+        });
+
+        document.getElementById('urlPreview').textContent = `${PROTOCOL}//${DOMAIN}/site/your-site`;
+
+        const fileInput = document.getElementById('fileInput');
+        fileInput.addEventListener('change', function(e) {
+            const file = this.files[0];
+            if (file) {
+                document.getElementById('fileName').style.display = 'block';
+                document.getElementById('fileLabel').textContent = file.name + ' (' + (file.size/1024/1024).toFixed(2) + ' MB)';
+                if (file.name.endsWith('.html') || file.name.endsWith('.htm')) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById('htmlEditor').value = event.target.result;
+                    };
+                    reader.readAsText(file);
+                }
+            }
+        });
+
+        const dropZone = document.getElementById('dropZone');
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.add('dragover');
+            });
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, (e) => {
+                e.preventDefault();
+                dropZone.classList.remove('dragover');
+            });
+        });
+
+        // ============================================
+        // TEMPLATES
+        // ============================================
+        const TEMPLATES = {
+            business: `<!DOCTYPE html><html><head><title>Business</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Arial;background:#f4f4f4;}.hero{background:linear-gradient(135deg,#667eea,#764ba2);color:white;padding:80px 20px;text-align:center;}.hero h1{font-size:3rem;margin-bottom:20px;}.btn{background:white;color:#764ba2;padding:15px 40px;border-radius:30px;text-decoration:none;font-weight:700;display:inline-block;}.features{padding:60px 20px;max-width:1200px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:30px;}.feature{background:white;padding:30px;border-radius:12px;box-shadow:0 5px 20px rgba(0,0,0,0.1);text-align:center;}.feature h3{color:#764ba2;}</style></head><body><div class="hero"><h1>🚀 Business</h1><p>Professional presence online.</p><a href="#" class="btn">Get Started</a></div><div class="features"><div class="feature"><h3>📊 Analytics</h3><p>Track visitors</p></div><div class="feature"><h3>⚡ Fast</h3><p>Lightning speed</p></div><div class="feature"><h3>🔒 Secure</h3><p>SSL protected</p></div></div></body></html>`,
+            portfolio: `<!DOCTYPE html><html><head><title>Portfolio</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Segoe UI',sans-serif;background:#0a0a0a;color:white;}.container{max-width:1200px;margin:0 auto;padding:40px 20px;}.header{text-align:center;padding:60px 0;}.header h1{font-size:3.5rem;background:linear-gradient(135deg,#667eea,#764ba2);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px;}.card{background:#1a1a1a;border-radius:12px;padding:30px;text-align:center;border:1px solid #333;transition:transform 0.3s;}.card:hover{transform:translateY(-10px);border-color:#764ba2;}.card .icon{font-size:3rem;margin-bottom:15px;}</style></head><body><div class="container"><div class="header"><h1>🎨 Portfolio</h1><p style="color:#888;">Creative work</p></div><div class="grid"><div class="card"><div class="icon">🎯</div><h3>Project 1</h3><p style="color:#888;">Web Design</p></div><div class="card"><div class="icon">🎨</div><h3>Project 2</h3><p style="color:#888;">UI/UX</p></div><div class="card"><div class="icon">🚀</div><h3>Project 3</h3><p style="color:#888;">Development</p></div></div></div></body></html>`,
+            startup: `<!DOCTYPE html><html><head><title>Startup</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Segoe UI',sans-serif;background:white;}.hero{background:linear-gradient(135deg,#f093fb,#f5576c);padding:100px 20px;text-align:center;color:white;}.hero h1{font-size:4rem;margin-bottom:20px;}.cta{display:inline-block;background:white;color:#f5576c;padding:15px 40px;border-radius:50px;text-decoration:none;font-weight:700;margin-top:20px;}</style></head><body><div class="hero"><h1>🚀 Startup</h1><p>Launch your idea.</p><a href="#" class="cta">Join Waitlist</a></div></body></html>`,
+            landing: `<!DOCTYPE html><html><head><title>Landing</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Segoe UI',sans-serif;background:#1a1a2e;color:white;display:flex;justify-content:center;align-items:center;min-height:100vh;margin:0;}.card{background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);padding:60px;border-radius:20px;text-align:center;max-width:500px;border:1px solid rgba(255,255,255,0.1);}.card h1{font-size:2.5rem;margin-bottom:15px;}.input-group{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}.input-group input{flex:1;min-width:200px;padding:12px 20px;border-radius:8px;border:none;}.input-group button{padding:12px 30px;border-radius:8px;border:none;background:#667eea;color:white;font-weight:700;cursor:pointer;}</style></head><body><div class="card"><h1>📱 Landing</h1><p>Subscribe to get updates</p><div class="input-group"><input type="email" placeholder="Your email"><button>Subscribe</button></div></div></body></html>`,
+            blog: `<!DOCTYPE html><html><head><title>Blog</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:Georgia,serif;background:#fafafa;color:#333;}.container{max-width:800px;margin:0 auto;padding:40px 20px;}.header{text-align:center;padding:40px 0;}.header h1{font-size:2.5rem;}.post{background:white;padding:30px;border-radius:12px;margin-bottom:20px;box-shadow:0 2px 10px rgba(0,0,0,0.05);}.post h2{color:#764ba2;}</style></head><body><div class="container"><div class="header"><h1>📝 Blog</h1><p style="color:#888;">Thoughts & ideas</p></div><div class="post"><h2>Hello World</h2><p>Welcome to my blog.</p></div></div></body></html>`,
+            ecommerce: `<!DOCTYPE html><html><head><title>Shop</title><style>*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'Segoe UI',sans-serif;background:#f8f9fa;}.header{background:white;padding:20px 40px;box-shadow:0 2px 10px rgba(0,0,0,0.05);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}.header h1{color:#764ba2;}.products{max-width:1200px;margin:40px auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:30px;padding:0 20px;}.product{background:white;padding:20px;border-radius:12px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,0.05);}.product .price{color:#764ba2;font-weight:700;font-size:1.2rem;margin:10px 0;}.product button{background:#764ba2;color:white;border:none;padding:8px 20px;border-radius:8px;cursor:pointer;}</style></head><body><div class="header"><h1>🛒 Shop</h1><span style="color:#888;">🛍️ Cart (0)</span></div><div class="products"><div class="product"><h3>Product 1</h3><div class="price">$29.99</div><button>Add to Cart</button></div><div class="product"><h3>Product 2</h3><div class="price">$49.99</div><button>Add to Cart</button></div><div class="product"><h3>Product 3</h3><div class="price">$99.99</div><button>Add to Cart</button></div></div></body></html>`
+        };
+
+        document.querySelectorAll('.template-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const html = TEMPLATES[this.dataset.template];
+                if (html) {
+                    document.getElementById('htmlEditor').value = html;
+                    document.querySelector('.tab-btn[data-tab="upload"]').click();
+                    showResult('✅ Template loaded!', 'success');
+                }
+            });
+        });
+
+        function copyLink() {
+            const link = document.getElementById('liveLink').href;
+            navigator.clipboard.writeText(link).then(() => {
+                showResult('✅ Link copied to clipboard!', 'success');
+            }).catch(() => {
+                const textArea = document.createElement('textarea');
+                textArea.value = link;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showResult('✅ Link copied to clipboard!', 'success');
+            });
+        }
+
+        // ============================================
+        // FORM SUBMIT
+        // ============================================
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                showResult('❌ Please Register or Login first!', 'error');
+                return;
+            }
+
+            const submitBtn = document.getElementById('submitBtn');
+            const loader = document.getElementById('loader');
+            const result = document.getElementById('result');
+
+            const subdomain = document.getElementById('subdomain').value.trim();
+            const file = document.getElementById('fileInput').files[0];
+            const htmlContent = document.getElementById('htmlEditor').value.trim();
+
+            if (!subdomain) { showResult('❌ Subdomain name likhna zaroori hai!', 'error'); return; }
+            if (!file && !htmlContent) { showResult('❌ Ya toh file upload karein ya HTML likhein!', 'error'); return; }
+
+            const cleanSub = subdomain.toLowerCase().replace(/[^a-z0-9-]/g, '');
+            if (cleanSub.length < 2) { showResult('❌ Subdomain kam se kam 2 characters ka ho!', 'error'); return; }
+
+            const sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            if (sites.find(s => s.subdomain === cleanSub)) {
+                if (!confirm(`⚠️ "${cleanSub}" already exists. Overwrite?`)) return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = '⏳ Deploying...';
+            loader.classList.add('active');
+            result.style.display = 'none';
+            document.getElementById('liveLinkBox').style.display = 'none';
+
+            try {
+                let finalHtml = htmlContent;
+                if (file) {
+                    if (file.name.endsWith('.html') || file.name.endsWith('.htm')) {
+                        const reader = new FileReader();
+                        finalHtml = await new Promise((resolve) => {
+                            reader.onload = function(e) { resolve(e.target.result); };
+                            reader.readAsText(file);
+                        });
+                    } else {
+                        finalHtml = `<!DOCTYPE html><html><head><title>${cleanSub}</title><style>body{font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#667eea,#764ba2);color:white;text-align:center;margin:0;}.card{background:rgba(255,255,255,0.1);padding:40px;border-radius:20px;backdrop-filter:blur(10px);}h1{font-size:2.5rem;}</style></head><body><div class="card"><h1>🚀 ${cleanSub}</h1><p>Created by ${currentUser.email}</p></div></body></html>`;
+                    }
+                }
+
+                const existing = sites.find(s => s.subdomain === cleanSub);
+                if (existing) {
+                    existing.html = finalHtml;
+                    existing.date = new Date().toISOString();
+                    existing.user = currentUser.email;
+                } else {
+                    sites.push({ subdomain: cleanSub, html: finalHtml, date: new Date().toISOString(), user: currentUser.email });
+                }
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+
+                const url = `${PROTOCOL}//${DOMAIN}/site/${cleanSub}`;
+
+                const liveLinkBox = document.getElementById('liveLinkBox');
+                const liveLink = document.getElementById('liveLink');
+                liveLink.href = url;
+                liveLink.textContent = url;
+                liveLinkBox.style.display = 'block';
+
+                showResult(`
+                    ✅ <strong>Success!</strong> Landing page live ho gaya!<br><br>
+                    🔗 <strong>Your Link:</strong> <a href="${url}" target="_blank">${url}</a><br>
+                    <small style="display:block;margin-top:10px;">📋 Copy karein aur share karein!</small>
+                `, 'success');
+                
+                document.getElementById('htmlEditor').value = '';
+                document.getElementById('fileInput').value = '';
+                document.getElementById('fileName').style.display = 'none';
+                document.getElementById('subdomain').value = '';
+                loadSites();
+                updateStats();
+
+                liveLinkBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            } catch (error) {
+                showResult('❌ Error: ' + error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '🚀 Free Host Karo!';
+                loader.classList.remove('active');
+            }
+        });
+
+        // ============================================
+        // LOAD SITES
+        // ============================================
+        function loadSites() {
+            const allSites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const siteList = document.getElementById('siteList');
+            
+            let sites = allSites;
+            if (currentUser) {
+                sites = allSites.filter(s => s.user === currentUser.email);
+            }
+            
+            document.getElementById('totalSites').textContent = sites.length;
+
+            if (sites.length === 0) {
+                siteList.innerHTML = `
+                    <div class="empty-sites">
+                        ${currentUser ? 'No sites hosted yet. Upload your first one! 🚀' : 'Please Register/Login to see your sites'}
+                        <br><small style="color:#999;">Domain: ${DOMAIN}</small>
+                    </div>
+                `;
+                return;
+            }
+
+            siteList.innerHTML = sites.map(site => `
+                <div class="site-item">
+                    <div class="site-info">
+                        <span>🚀</span>
+                        <a href="${PROTOCOL}//${DOMAIN}/site/${site.subdomain}" target="_blank" class="site-url">${site.subdomain}</a>
+                        <small style="color:#888;">${new Date(site.date).toLocaleDateString()}</small>
+                        ${site.user ? `<small style="color:#17a2b8;">👤 ${site.user.split('@')[0]}</small>` : ''}
+                    </div>
+                    <div class="site-actions">
+                        <a href="${PROTOCOL}//${DOMAIN}/site/${site.subdomain}" target="_blank" class="btn-secondary" style="padding:4px 12px;text-decoration:none;">🔗 Visit</a>
+                        ${currentUser && site.user === currentUser.email ? `
+                            <button class="btn-edit" onclick="openEditModal('${site.subdomain}')">✏️ Edit</button>
+                            <button class="btn-danger" onclick="deleteSite('${site.subdomain}')">🗑️</button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteSite(subdomain) {
+            if (!currentUser) { showResult('❌ Please login first!', 'error'); return; }
+            if (!confirm(`Kya aap "${subdomain}" ko delete karna chahte hain?`)) return;
+            
+            let sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            sites = sites.filter(s => s.subdomain !== subdomain);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+            showResult(`✅ "${subdomain}" delete ho gaya!`, 'info');
+            loadSites();
+            updateStats();
+        }
+
+        function clearAllSites() {
+            if (!currentUser) { showResult('❌ Please login first!', 'error'); return; }
+            if (!confirm('Kya aap ALL sites delete karna chahte hain?')) return;
+            
+            let sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            sites = sites.filter(s => s.user !== currentUser.email);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+            showResult('✅ All your sites deleted!', 'info');
+            loadSites();
+            updateStats();
+        }
+
+        function updateStats() {
+            const allSites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            let userSites = allSites;
+            if (currentUser) {
+                userSites = allSites.filter(s => s.user === currentUser.email);
+            }
+            document.getElementById('totalSites').textContent = userSites.length;
+        }
+
+        // ============================================
+        // EDIT MODAL
+        // ============================================
+        function openEditModal(subdomain) {
+            if (!currentUser) { showResult('❌ Please login first!', 'error'); return; }
+            
+            const sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const site = sites.find(s => s.subdomain === subdomain);
+            if (!site) { showResult('❌ Site not found!', 'error'); return; }
+            if (site.user !== currentUser.email) { showResult('❌ You can only edit your own sites!', 'error'); return; }
+            
+            editingSubdomain = subdomain;
+            document.getElementById('editSubdomain').textContent = subdomain;
+            document.getElementById('editHtmlContent').value = site.html || '';
+            document.getElementById('editModal').classList.add('active');
+        }
+
+        function closeEditModal() {
+            document.getElementById('editModal').classList.remove('active');
+            editingSubdomain = null;
+        }
+
+        function saveEdit() {
+            const newHtml = document.getElementById('editHtmlContent').value;
+            if (!editingSubdomain) { showResult('❌ No site selected!', 'error'); return; }
+            
+            let sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const site = sites.find(s => s.subdomain === editingSubdomain);
+            if (site) {
+                site.html = newHtml;
+                site.date = new Date().toISOString();
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+                showResult(`✅ "${editingSubdomain}" updated!`, 'success');
+                closeEditModal();
+                loadSites();
+            }
+        }
+
+        document.getElementById('editModal').addEventListener('click', function(e) {
+            if (e.target === this) closeEditModal();
+        });
+
+        function showResult(message, type) {
+            const result = document.getElementById('result');
+            result.className = type;
+            result.innerHTML = message;
+            result.style.display = 'block';
+            clearTimeout(result._timeout);
+            result._timeout = setTimeout(() => { result.style.display = 'none'; }, 30000);
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeEditModal();
+                closeAuthModal();
+                closeForgotModal();
+            }
+            if (e.ctrlKey && e.key === 's' && document.getElementById('editModal').classList.contains('active')) {
+                e.preventDefault();
+                saveEdit();
+            }
+        });
+
+        // ============================================
+        // AUTO-CREATE DEFAULT SITES
+        // ============================================
+        function createDefaultSites() {
+            let sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            
+            const defaults = [
+                { subdomain: 'jj', html: `<!DOCTYPE html><html><head><title>JJ Site</title><style>body{font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#667eea,#764ba2);color:white;text-align:center;margin:0;}.card{background:rgba(255,255,255,0.1);padding:40px;border-radius:20px;backdrop-filter:blur(10px);}h1{font-size:3rem;}</style></head><body><div class="card"><h1>🚀 JJ</h1><p>Your site is live!</p></div></body></html>`, user: 'default' },
+                { subdomain: 'adbuilagency', html: `<!DOCTYPE html><html><head><title>Adbuilagency</title><style>body{font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#f093fb,#f5576c);color:white;text-align:center;margin:0;}.card{background:rgba(255,255,255,0.1);padding:50px;border-radius:20px;backdrop-filter:blur(10px);}h1{font-size:3rem;}.tag{display:inline-block;background:#28a745;padding:5px 15px;border-radius:20px;font-size:0.8rem;margin-top:10px;}</style></head><body><div class="card"><h1>🚀 Adbuilagency</h1><p>Professional agency landing page</p><span class="tag">⚡ Live</span></div></body></html>`, user: 'default' }
+            ];
+
+            let added = 0;
+            defaults.forEach(sample => {
+                if (!sites.find(s => s.subdomain === sample.subdomain)) {
+                    sites.push({
+                        subdomain: sample.subdomain,
+                        html: sample.html,
+                        date: new Date().toISOString(),
+                        user: sample.user
+                    });
+                    added++;
+                }
+            });
+
+            if (added > 0) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+                console.log(`✅ Added ${added} default sites`);
+            }
+        }
+
+        // ============================================
+        // INIT
+        // ============================================
+        loadUser();
+        createDefaultSites();
+        loadSites();
+        updateStats();
+
+        console.log('🚀 Free Host Loaded!');
+        console.log('🌐 Domain:', DOMAIN);
+        console.log('📊 Total Sites:', JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').length);
+        console.log('👤 User:', currentUser ? currentUser.email : 'Not logged in');
+        console.log('🔗 Try: /site/jj or /site/adbuilagency');
+        console.log('💾 Backup & Restore available!');
+        console.log('📊 Google Sheets Integration: ' + (SHEET_API_URL.includes('YOUR_SCRIPT_ID') ? '⚠️ Set SHEET_API_URL' : '✅ Active'));
+    </script>
+
+</body>
+</html>
