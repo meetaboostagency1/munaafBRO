@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 Free Host - Google Sheets</title>
+    <title>🚀 Free Host - Landing Page Hosting</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
@@ -125,6 +125,9 @@
         .subdomain-auto p { color: #555; font-size: 0.9rem; }
         .subdomain-auto code { background: white; padding: 2px 8px; border-radius: 4px; color: #17a2b8; font-weight: 600; }
         .password-hint { font-size: 0.8rem; color: #999; margin-top: 5px; }
+        .status-dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; }
+        .status-dot.online { background: #28a745; }
+        .status-dot.offline { background: #dc3545; }
         @media (max-width: 600px) { .container { padding: 20px; } .header h1 { font-size: 1.8rem; } .stats { flex-direction: column; align-items: center; } .tab-btn { flex: 1; text-align: center; padding: 8px 12px; font-size: 0.9rem; min-width: 80px; } .site-item { flex-direction: column; align-items: flex-start; } .site-item .site-actions { width: 100%; justify-content: flex-start; } .auth-modal-content { padding: 25px; } .btn-group { flex-direction: column; width: 100%; } .btn-group button { width: 100%; } }
     </style>
 </head>
@@ -135,7 +138,7 @@
             <h1>🚀 Free Host</h1>
             <p>Apni landing page <strong>FREE</strong> mein host karein</p>
             <span class="badge">⚡ 100% Free</span>
-            <span class="domain-badge">🌐 Auto Domain</span>
+            <span class="domain-badge">🌐 <span id="domainDisplay">Auto Domain</span></span>
         </div>
 
         <!-- Login Section -->
@@ -299,10 +302,8 @@
 
     <script>
         // ============================================
-        // ⚠️ IMPORTANT: Yahan apna Google Apps Script URL daalein
+        // DOMAIN CONFIGURATION
         // ============================================
-        const SHEET_API_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
-        
         const DOMAIN = window.location.hostname + (window.location.port ? ':' + window.location.port : '');
         const PROTOCOL = window.location.protocol;
         const STORAGE_KEY = 'hosted_sites';
@@ -312,38 +313,12 @@
         let isLoginMode = false;
 
         // Update domain display
-        document.querySelectorAll('.domain-badge, .example code, .subdomain-auto code, .live-link-box a, #urlPreview, #autoSubdomainLink, #liveLink').forEach(el => {
+        document.getElementById('domainDisplay').textContent = DOMAIN;
+        document.querySelectorAll('.example code, .subdomain-auto code, .live-link-box a, #urlPreview, #autoSubdomainLink, #liveLink').forEach(el => {
             if (el.textContent.includes('your-domain.com') || el.textContent.includes('yourname') || el.textContent.includes('your-site')) {
                 el.textContent = el.textContent.replace(/your-domain\.com/g, DOMAIN);
             }
         });
-
-        // ============================================
-        // GOOGLE SHEETS API CALL
-        // ============================================
-        async function callSheetAPI(action, data) {
-            try {
-                const payload = { action, ...data };
-                console.log('📤 Sending to Google Sheets:', payload);
-                
-                const response = await fetch(SHEET_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Network response was not ok: ' + response.status);
-                }
-                
-                const result = await response.json();
-                console.log('📥 Response from Google Sheets:', result);
-                return result;
-            } catch(error) {
-                console.error('❌ API Error:', error);
-                return { success: false, error: error.message };
-            }
-        }
 
         // ============================================
         // BACKUP & RESTORE
@@ -392,7 +367,7 @@
         }
 
         // ============================================
-        // AUTHENTICATION WITH GOOGLE SHEETS
+        // AUTHENTICATION - LOCAL STORAGE (NO API)
         // ============================================
         function loadUser() {
             const saved = localStorage.getItem('freehost_user');
@@ -477,19 +452,17 @@
                 return;
             }
 
-            showResult('⏳ Please wait...', 'info');
+            const users = getUsers();
+            if (!users[email]) {
+                showResult('❌ Email not found!', 'error');
+                return;
+            }
 
-            callSheetAPI('reset', { email, newPassword }).then(response => {
-                if (response.success) {
-                    showResult('✅ Password updated successfully! Please login.', 'success');
-                    closeForgotModal();
-                    openLoginModal();
-                } else {
-                    showResult('❌ ' + (response.error || 'Reset failed!'), 'error');
-                }
-            }).catch(err => {
-                showResult('❌ Error: ' + err.message, 'error');
-            });
+            users[email].password = newPassword;
+            saveUsers(users);
+            showResult('✅ Password updated successfully! Please login.', 'success');
+            closeForgotModal();
+            openLoginModal();
         }
 
         function handleAuth(e) {
@@ -507,55 +480,57 @@
                 return;
             }
 
-            showResult('⏳ Please wait...', 'info');
+            const users = getUsers();
 
             if (isLoginMode) {
-                // Login via Google Sheets
-                callSheetAPI('login', { email, password }).then(response => {
-                    if (response.success) {
-                        currentUser = {
-                            email: email,
-                            name: email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, ''),
-                            avatar: email.charAt(0).toUpperCase(),
-                            subdomain: email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, '')
-                        };
-                        localStorage.setItem('freehost_user', JSON.stringify(currentUser));
-                        updateUI();
-                        showAutoSubdomain();
-                        closeAuthModal();
-                        showResult('✅ Logged in as ' + email, 'success');
-                        loadSites();
-                        createUserSubdomain(currentUser.subdomain);
-                    } else {
-                        showResult('❌ ' + (response.error || 'Login failed!'), 'error');
-                    }
-                }).catch(err => {
-                    showResult('❌ Error: ' + err.message, 'error');
-                });
+                // Login
+                if (!users[email]) {
+                    showResult('❌ User not found! Please register first.', 'error');
+                    return;
+                }
+                if (users[email].password !== password) {
+                    showResult('❌ Incorrect password!', 'error');
+                    return;
+                }
+                currentUser = {
+                    email: email,
+                    name: email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, ''),
+                    avatar: email.charAt(0).toUpperCase(),
+                    subdomain: email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, '')
+                };
+                localStorage.setItem('freehost_user', JSON.stringify(currentUser));
+                updateUI();
+                showAutoSubdomain();
+                closeAuthModal();
+                showResult('✅ Logged in as ' + email, 'success');
+                loadSites();
+                createUserSubdomain(currentUser.subdomain);
 
             } else {
-                // Register via Google Sheets
-                callSheetAPI('register', { email, password }).then(response => {
-                    if (response.success) {
-                        currentUser = {
-                            email: email,
-                            name: email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, ''),
-                            avatar: email.charAt(0).toUpperCase(),
-                            subdomain: email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, '')
-                        };
-                        localStorage.setItem('freehost_user', JSON.stringify(currentUser));
-                        updateUI();
-                        showAutoSubdomain();
-                        closeAuthModal();
-                        showResult('✅ Registration successful! Logged in as ' + email, 'success');
-                        loadSites();
-                        createUserSubdomain(currentUser.subdomain);
-                    } else {
-                        showResult('❌ ' + (response.error || 'Registration failed!'), 'error');
-                    }
-                }).catch(err => {
-                    showResult('❌ Error: ' + err.message, 'error');
-                });
+                // Register
+                if (users[email]) {
+                    showResult('❌ User already exists! Please login.', 'error');
+                    return;
+                }
+                users[email] = {
+                    password: password,
+                    created: new Date().toISOString()
+                };
+                saveUsers(users);
+                
+                currentUser = {
+                    email: email,
+                    name: email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, ''),
+                    avatar: email.charAt(0).toUpperCase(),
+                    subdomain: email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, '')
+                };
+                localStorage.setItem('freehost_user', JSON.stringify(currentUser));
+                updateUI();
+                showAutoSubdomain();
+                closeAuthModal();
+                showResult('✅ Registration successful! Logged in as ' + email, 'success');
+                loadSites();
+                createUserSubdomain(currentUser.subdomain);
             }
         }
 
@@ -631,7 +606,7 @@
         }
 
         // ============================================
-        // ROUTE HANDLER
+        // ROUTE HANDLER - FIXED
         // ============================================
         (function() {
             const path = window.location.pathname;
@@ -1047,8 +1022,7 @@
         console.log('👤 User:', currentUser ? currentUser.email : 'Not logged in');
         console.log('🔗 Try: /site/jj or /site/adbuilagency');
         console.log('💾 Backup & Restore available!');
-        console.log('📊 Google Sheets API URL:', SHEET_API_URL);
-        console.log('✅ Google Sheets Integration: ' + (SHEET_API_URL.includes('YOUR_SCRIPT_ID') ? '⚠️ Set SHEET_API_URL in code' : '✅ Active'));
+        console.log('✅ Registration working with Local Storage!');
     </script>
 
 </body>
