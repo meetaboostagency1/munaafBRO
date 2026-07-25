@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🚀 Adbuilagency - Free Hosting</title>
+    <title>🚀 Free Host - Landing Page Hosting</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
@@ -81,13 +81,6 @@
         .modal .modal-actions { display: flex; gap: 10px; margin-top: 15px; justify-content: flex-end; }
         .modal .modal-actions .btn-save { background: #28a745; color: white; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; }
         .modal .modal-actions .btn-close { background: #6c757d; color: white; border: none; padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; }
-        .domain-setup { background: #e8f4f8; border-radius: 12px; padding: 15px; margin-bottom: 20px; border-left: 4px solid #17a2b8; }
-        .domain-setup h4 { color: #17a2b8; margin-bottom: 5px; }
-        .domain-setup p { color: #555; font-size: 0.9rem; }
-        .domain-setup code { background: white; padding: 2px 8px; border-radius: 4px; color: #17a2b8; font-weight: 600; }
-        .quick-link { background: #f0ebf8; border-radius: 12px; padding: 15px; margin: 15px 0; text-align: center; }
-        .quick-link a { color: #764ba2; font-weight: 700; text-decoration: none; font-size: 1.1rem; }
-        .quick-link a:hover { text-decoration: underline; }
         .live-link-box { background: #d4edda; border: 2px solid #28a745; border-radius: 12px; padding: 20px; margin: 15px 0; text-align: center; }
         .live-link-box h3 { color: #28a745; margin-bottom: 10px; }
         .live-link-box a { font-size: 1.3rem; color: #155724; font-weight: 700; text-decoration: none; word-break: break-all; }
@@ -99,16 +92,16 @@
 
     <div class="container">
         <div class="header">
-            <h1>🚀 Adbuilagency Host</h1>
+            <h1>🚀 Free Host</h1>
             <p>Apni landing page <strong>FREE</strong> mein host karein</p>
             <span class="badge">⚡ 100% Free</span>
-            <span class="domain-badge">🌐 adbuilagency.com</span>
+            <span class="domain-badge">🌐 munaaf-bro.vercel.app</span>
         </div>
 
         <!-- Live Link Box -->
         <div class="live-link-box" id="liveLinkBox" style="display:none;">
             <h3>✅ Your Site is Live!</h3>
-            <a href="#" id="liveLink" target="_blank">https://adbuilagency.com/site/your-site</a>
+            <a href="#" id="liveLink" target="_blank">https://munaaf-bro.vercel.app/site/your-site</a>
             <br><br>
             <button onclick="copyLink()" class="btn-secondary">📋 Copy Link</button>
         </div>
@@ -125,7 +118,7 @@
                     <label for="subdomain">🔗 Choose Your URL</label>
                     <input type="text" id="subdomain" name="subdomain" placeholder="mypage" required>
                     <div class="example">
-                        💡 Your URL: <code id="urlPreview">https://adbuilagency.com/site/mypage</code>
+                        💡 Your URL: <code id="urlPreview">https://munaaf-bro.vercel.app/site/mypage</code>
                     </div>
                 </div>
 
@@ -182,7 +175,6 @@
             <div class="stat-item"><span class="stat-number" id="totalSites">0</span><span class="stat-label">Total Sites</span></div>
             <div class="stat-item"><span class="stat-number" style="color:#28a745;">●</span><span class="stat-label">Live</span></div>
             <div class="stat-item"><span class="stat-number" style="color:#17a2b8;">100MB</span><span class="stat-label">Max File Size</span></div>
-            <div class="stat-item"><span class="stat-number" style="color:#764ba2;">🌐</span><span class="stat-label">adbuilagency.com</span></div>
         </div>
     </div>
 
@@ -199,16 +191,15 @@
 
     <script>
         // ============================================
-        // DOMAIN CONFIGURATION - FIXED
+        // DOMAIN CONFIGURATION
         // ============================================
-        const DOMAIN = 'adbuilagency.com';
+        const DOMAIN = 'munaaf-bro.vercel.app';
         const PROTOCOL = 'https://';
-        const STORAGE_KEY = 'adbuilagency_sites';
+        const STORAGE_KEY = 'hosted_sites';
         let editingSubdomain = null;
-        let lastCreatedSite = null;
 
         // ============================================
-        // ROUTE HANDLER - ALWAYS SHOWS SITE IF EXISTS
+        // ROUTE HANDLER - FIXED
         // ============================================
         (function() {
             const path = window.location.pathname;
@@ -249,9 +240,7 @@
                                     <li>Click "Free Host Karo!"</li>
                                 </ol>
                             </div>
-                            <div style="margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-                                <a href="/" style="display:inline-block;background:#764ba2;color:white;padding:12px 30px;border-radius:8px;text-decoration:none;font-weight:600;">🏠 Go to Home</a>
-                            </div>
+                            <a href="/" style="display:inline-block;background:#764ba2;color:white;padding:12px 30px;border-radius:8px;text-decoration:none;font-weight:600;margin-top:10px;">🏠 Go to Home</a>
                         </div>
                     `;
                     return;
@@ -340,14 +329,13 @@
         });
 
         // ============================================
-        // COPY LINK FUNCTION
+        // COPY LINK
         // ============================================
         function copyLink() {
             const link = document.getElementById('liveLink').href;
             navigator.clipboard.writeText(link).then(() => {
                 showResult('✅ Link copied to clipboard!', 'success');
             }).catch(() => {
-                // Fallback
                 const textArea = document.createElement('textarea');
                 textArea.value = link;
                 document.body.appendChild(textArea);
@@ -359,7 +347,7 @@
         }
 
         // ============================================
-        // FORM SUBMIT - CREATE SITE WITH WORKING LINK
+        // FORM SUBMIT
         // ============================================
         document.getElementById('uploadForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -412,7 +400,6 @@
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
 
                 const url = `${PROTOCOL}${DOMAIN}/site/${cleanSub}`;
-                lastCreatedSite = cleanSub;
 
                 // Show live link box
                 const liveLinkBox = document.getElementById('liveLinkBox');
@@ -458,7 +445,7 @@
                 siteList.innerHTML = `
                     <div class="empty-sites">
                         No sites hosted yet. Upload your first one! 🚀<br>
-                        <small style="color:#999;">Domain: adbuilagency.com</small>
+                        <small style="color:#999;">Domain: munaaf-bro.vercel.app</small>
                     </div>
                 `;
                 return;
@@ -564,33 +551,46 @@
         });
 
         // ============================================
-        // AUTO-CREATE DEFAULT SITE
+        // AUTO-CREATE DEFAULT SITES
         // ============================================
-        function createDefaultSite() {
+        function createDefaultSites() {
             let sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
             
-            if (!sites.find(s => s.subdomain === 'adbuilagency')) {
-                sites.push({
-                    subdomain: 'adbuilagency',
-                    html: `<!DOCTYPE html><html><head><title>Adbuilagency</title><style>body{font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#667eea,#764ba2);color:white;text-align:center;margin:0;}.card{background:rgba(255,255,255,0.1);padding:50px;border-radius:20px;backdrop-filter:blur(10px);}h1{font-size:3rem;}.tag{display:inline-block;background:#28a745;padding:5px 15px;border-radius:20px;font-size:0.8rem;margin-top:10px;}</style></head><body><div class="card"><h1>🚀 Adbuilagency</h1><p>Professional agency landing page</p><span class="tag">⚡ Live</span></div></body></html>`,
-                    date: new Date().toISOString()
-                });
+            const defaults = [
+                { subdomain: 'jj', html: `<!DOCTYPE html><html><head><title>JJ Site</title><style>body{font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#667eea,#764ba2);color:white;text-align:center;margin:0;}.card{background:rgba(255,255,255,0.1);padding:40px;border-radius:20px;backdrop-filter:blur(10px);}h1{font-size:3rem;}</style></head><body><div class="card"><h1>🚀 JJ</h1><p>Your site is live!</p></div></body></html>` },
+                { subdomain: 'adbuilagency', html: `<!DOCTYPE html><html><head><title>Adbuilagency</title><style>body{font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#f093fb,#f5576c);color:white;text-align:center;margin:0;}.card{background:rgba(255,255,255,0.1);padding:50px;border-radius:20px;backdrop-filter:blur(10px);}h1{font-size:3rem;}.tag{display:inline-block;background:#28a745;padding:5px 15px;border-radius:20px;font-size:0.8rem;margin-top:10px;}</style></head><body><div class="card"><h1>🚀 Adbuilagency</h1><p>Professional agency landing page</p><span class="tag">⚡ Live</span></div></body></html>` }
+            ];
+
+            let added = 0;
+            defaults.forEach(sample => {
+                if (!sites.find(s => s.subdomain === sample.subdomain)) {
+                    sites.push({
+                        subdomain: sample.subdomain,
+                        html: sample.html,
+                        date: new Date().toISOString()
+                    });
+                    added++;
+                }
+            });
+
+            if (added > 0) {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
-                console.log('✅ Created default site: adbuilagency');
+                console.log(`✅ Added ${added} default sites`);
             }
         }
 
         // ============================================
         // INIT
         // ============================================
-        createDefaultSite();
+        createDefaultSites();
         loadSites();
         updateStats();
 
-        console.log('🚀 Adbuilagency Host Loaded!');
+        console.log('🚀 Free Host Loaded!');
         console.log('🌐 Domain:', DOMAIN);
         console.log('📊 Total Sites:', JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').length);
-        console.log('🔗 Default: https://adbuilagency.com/site/adbuilagency');
+        console.log('🔗 Try: https://munaaf-bro.vercel.app/site/jj');
+        console.log('🔗 Try: https://munaaf-bro.vercel.app/site/adbuilagency');
     </script>
 
 </body>
