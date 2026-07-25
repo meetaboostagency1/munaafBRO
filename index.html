@@ -363,7 +363,7 @@
         }
 
         // ============================================
-        // AUTHENTICATION - LOCAL STORAGE (FIXED)
+        // AUTHENTICATION - FIXED (No API Call)
         // ============================================
         function loadUser() {
             const saved = localStorage.getItem('freehost_user');
@@ -1018,7 +1018,7 @@
         console.log('👤 User:', currentUser ? currentUser.email : 'Not logged in');
         console.log('🔗 Try: /site/jj or /site/adbuilagency');
         console.log('💾 Backup & Restore available!');
-        console.log('✅ Registration is working with Local Storage!');
+        console.log('✅ Registration working with Local Storage!');
     </script>
 
 </body>
