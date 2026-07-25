@@ -1,3 +1,67 @@
+// ============================================
+// ROUTE HANDLER - FIXED FOR VERCEL
+// ============================================
+(function() {
+    const path = window.location.pathname;
+    console.log('📍 Current path:', path);
+    
+    // Check if it's a site URL
+    const match = path.match(/^\/site\/([a-z0-9-]+)/);
+    
+    if (match) {
+        const subdomain = match[1];
+        console.log('🔍 Looking for site:', subdomain);
+        
+        // Get sites from localStorage
+        let sites = [];
+        try {
+            sites = JSON.parse(localStorage.getItem('hosted_sites') || '[]');
+        } catch(e) {
+            console.error('Error reading localStorage:', e);
+        }
+        
+        const site = sites.find(s => s.subdomain === subdomain);
+        
+        if (site && site.html) {
+            console.log('✅ Site found, showing:', subdomain);
+            // Show the site
+            document.body.innerHTML = site.html;
+            
+            // Add basic styles
+            const style = document.createElement('style');
+            style.textContent = `
+                * { margin:0; padding:0; box-sizing:border-box; }
+                body { font-family: Arial, sans-serif; background: white; }
+            `;
+            document.head.appendChild(style);
+            return;
+        } else {
+            console.log('❌ Site not found:', subdomain);
+            // Show custom 404
+            document.body.innerHTML = `
+                <div style="text-align:center;padding:100px 20px;font-family:Arial;max-width:600px;margin:0 auto;">
+                    <h1 style="font-size:4rem;color:#764ba2;">🚀</h1>
+                    <h2 style="color:#333;margin:20px 0;">Site Not Found</h2>
+                    <p style="color:#666;margin:20px 0;">"<strong>${subdomain}</strong>" does not exist</p>
+                    <div style="background:#f8f9fa;padding:20px;border-radius:12px;margin:20px 0;text-align:left;">
+                        <p style="color:#555;font-size:0.9rem;">💡 <strong>Create this site:</strong></p>
+                        <ol style="color:#555;font-size:0.9rem;text-align:left;padding-left:20px;margin:10px 0;">
+                            <li>Go to <a href="/" style="color:#764ba2;">Home</a></li>
+                            <li>Enter subdomain: <code style="background:#e0e0e0;padding:2px 8px;border-radius:4px;">${subdomain}</code></li>
+                            <li>Upload HTML or use template</li>
+                            <li>Click "Free Host Karo!"</li>
+                        </ol>
+                    </div>
+                    <a href="/" style="display:inline-block;background:#764ba2;color:white;padding:12px 30px;border-radius:8px;text-decoration:none;font-weight:600;margin-top:10px;">🏠 Go to Home</a>
+                </div>
+            `;
+            return;
+        }
+    }
+})();
+
+
+
 <!DOCTYPE html>
 <html lang="hi">
 <head>
