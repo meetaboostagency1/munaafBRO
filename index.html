@@ -15,7 +15,6 @@
         .badge { display: inline-block; background: #28a745; color: white; padding: 5px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-top: 10px; }
         .domain-badge { display: inline-block; background: #17a2b8; color: white; padding: 5px 20px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; margin-top: 5px; margin-left: 5px; }
         
-        /* Login styles */
         .login-section { background: #f8f9fa; border-radius: 12px; padding: 20px; margin-bottom: 25px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 15px; }
         .login-section .user-info { display: flex; align-items: center; gap: 10px; }
         .login-section .user-avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; }
@@ -96,6 +95,10 @@
         .live-link-box h3 { color: #28a745; margin-bottom: 10px; }
         .live-link-box a { font-size: 1.3rem; color: #155724; font-weight: 700; text-decoration: none; word-break: break-all; }
         .live-link-box a:hover { text-decoration: underline; }
+        .subdomain-auto { background: #e8f4f8; border-radius: 12px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #17a2b8; }
+        .subdomain-auto h4 { color: #17a2b8; margin-bottom: 5px; }
+        .subdomain-auto p { color: #555; font-size: 0.9rem; }
+        .subdomain-auto code { background: white; padding: 2px 8px; border-radius: 4px; color: #17a2b8; font-weight: 600; }
         @media (max-width: 600px) { .container { padding: 20px; } .header h1 { font-size: 1.8rem; } .stats { flex-direction: column; align-items: center; } .tab-btn { flex: 1; text-align: center; padding: 8px 12px; font-size: 0.9rem; min-width: 80px; } .site-item { flex-direction: column; align-items: flex-start; } .site-item .site-actions { width: 100%; justify-content: flex-start; } }
     </style>
 </head>
@@ -114,11 +117,19 @@
             <div class="user-info" id="userInfo" style="display:none;">
                 <div class="user-avatar" id="userAvatar">G</div>
                 <span class="user-email" id="userEmail">user@gmail.com</span>
+                <span class="badge" style="background:#17a2b8;font-size:0.7rem;padding:2px 10px;">✅ Verified</span>
             </div>
             <div>
                 <button class="login-btn" id="loginBtn" onclick="loginWithGmail()">🔑 Login with Gmail</button>
                 <button class="logout-btn" id="logoutBtn" style="display:none;" onclick="logoutUser()">🚪 Logout</button>
             </div>
+        </div>
+
+        <!-- Auto Subdomain Info -->
+        <div class="subdomain-auto" id="subdomainAuto" style="display:none;">
+            <h4>🔗 Your Auto-Generated Subdomain</h4>
+            <p>Your unique URL: <code id="autoSubdomainLink">https://munaaf-bro.vercel.app/site/yourname</code></p>
+            <small style="color:#999;">This subdomain is created from your Gmail username</small>
         </div>
 
         <!-- Live Link Box -->
@@ -142,6 +153,7 @@
                     <input type="text" id="subdomain" name="subdomain" placeholder="mypage" required>
                     <div class="example">
                         💡 Your URL: <code id="urlPreview">https://munaaf-bro.vercel.app/site/mypage</code>
+                        <br><small style="color:#999;">👉 Login ke baad auto subdomain milega!</small>
                     </div>
                 </div>
 
@@ -215,36 +227,67 @@
 
     <script>
         // ============================================
-        // GMAIL LOGIN - Using Google OAuth
+        // GMAIL LOGIN + AUTO SUBDOMAIN
         // ============================================
         let currentUser = null;
 
-        // Load user from localStorage
         function loadUser() {
             const saved = localStorage.getItem('freehost_user');
             if (saved) {
                 try {
                     currentUser = JSON.parse(saved);
                     updateUI();
+                    showAutoSubdomain();
                 } catch(e) {}
             }
         }
 
         function loginWithGmail() {
-            // Simple login - ask for email
             const email = prompt('Enter your Gmail address:', 'user@gmail.com');
             if (email && email.includes('@') && email.includes('.')) {
+                const username = email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, '');
                 currentUser = {
                     email: email,
-                    name: email.split('@')[0],
-                    avatar: email.charAt(0).toUpperCase()
+                    name: username,
+                    avatar: email.charAt(0).toUpperCase(),
+                    subdomain: username
                 };
                 localStorage.setItem('freehost_user', JSON.stringify(currentUser));
                 updateUI();
+                showAutoSubdomain();
                 showResult('✅ Logged in as ' + email, 'success');
                 loadSites();
+                
+                // Auto-create user's subdomain if not exists
+                createUserSubdomain(username);
             } else if (email !== null) {
                 showResult('❌ Please enter a valid email address!', 'error');
+            }
+        }
+
+        function createUserSubdomain(username) {
+            let sites = JSON.parse(localStorage.getItem('hosted_sites') || '[]');
+            if (!sites.find(s => s.subdomain === username)) {
+                sites.push({
+                    subdomain: username,
+                    html: `<!DOCTYPE html><html><head><title>${username}</title><style>body{font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#667eea,#764ba2);color:white;text-align:center;margin:0;}.card{background:rgba(255,255,255,0.1);padding:50px;border-radius:20px;backdrop-filter:blur(10px);}h1{font-size:3rem;}.tag{display:inline-block;background:#28a745;padding:5px 15px;border-radius:20px;font-size:0.8rem;margin-top:10px;}</style></head><body><div class="card"><h1>🚀 ${username}</h1><p>Welcome to your free landing page!</p><span class="tag">⚡ Live</span></div></body></html>`,
+                    date: new Date().toISOString(),
+                    user: currentUser.email
+                });
+                localStorage.setItem('hosted_sites', JSON.stringify(sites));
+                console.log(`✅ Auto-created subdomain: ${username}`);
+            }
+        }
+
+        function showAutoSubdomain() {
+            const div = document.getElementById('subdomainAuto');
+            const link = document.getElementById('autoSubdomainLink');
+            if (currentUser) {
+                div.style.display = 'block';
+                link.textContent = `${PROTOCOL}${DOMAIN}/site/${currentUser.subdomain}`;
+                link.href = `${PROTOCOL}${DOMAIN}/site/${currentUser.subdomain}`;
+            } else {
+                div.style.display = 'none';
             }
         }
 
@@ -252,6 +295,7 @@
             currentUser = null;
             localStorage.removeItem('freehost_user');
             updateUI();
+            document.getElementById('subdomainAuto').style.display = 'none';
             showResult('✅ Logged out successfully!', 'info');
             loadSites();
         }
@@ -323,7 +367,7 @@
                                 <p style="color:#555;">💡 <strong>Create this site now:</strong></p>
                                 <ol style="color:#555;text-align:left;padding-left:20px;margin:10px 0;">
                                     <li>Go to <a href="/" style="color:#764ba2;">Home</a></li>
-                                    <li>Enter subdomain: <code style="background:#e0e0e0;padding:2px 8px;border-radius:4px;">${subdomain}</code></li>
+                                    <li>Login with Gmail</li>
                                     <li>Upload HTML or use template</li>
                                     <li>Click "Free Host Karo!"</li>
                                 </ol>
@@ -340,7 +384,6 @@
         // MAIN JAVASCRIPT
         // ============================================
         
-        // Tab switching
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
                 document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -352,13 +395,11 @@
             });
         });
 
-        // URL Preview
         document.getElementById('subdomain').addEventListener('input', function() {
             const val = this.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
             document.getElementById('urlPreview').textContent = `${PROTOCOL}${DOMAIN}/site/${val || 'your-site'}`;
         });
 
-        // Initial URL preview
         document.getElementById('urlPreview').textContent = `${PROTOCOL}${DOMAIN}/site/your-site`;
 
         // File upload
@@ -378,7 +419,6 @@
             }
         });
 
-        // Drag & Drop
         const dropZone = document.getElementById('dropZone');
         ['dragenter', 'dragover'].forEach(eventName => {
             dropZone.addEventListener(eventName, (e) => {
@@ -496,7 +536,6 @@
 
                 const url = `${PROTOCOL}${DOMAIN}/site/${cleanSub}`;
 
-                // Show live link box
                 const liveLinkBox = document.getElementById('liveLinkBox');
                 const liveLink = document.getElementById('liveLink');
                 liveLink.href = url;
@@ -516,7 +555,6 @@
                 loadSites();
                 updateStats();
 
-                // Scroll to live link
                 liveLinkBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
             } catch (error) {
@@ -529,19 +567,15 @@
         });
 
         // ============================================
-        // LOAD SITES - Only show user's sites
+        // LOAD SITES
         // ============================================
         function loadSites() {
             const allSites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
             const siteList = document.getElementById('siteList');
             
-            // Filter sites by current user
             let sites = allSites;
             if (currentUser) {
                 sites = allSites.filter(s => s.user === currentUser.email);
-            } else {
-                // Show all sites if not logged in
-                sites = allSites;
             }
             
             document.getElementById('totalSites').textContent = sites.length;
@@ -715,8 +749,7 @@
         console.log('🌐 Domain:', DOMAIN);
         console.log('📊 Total Sites:', JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').length);
         console.log('👤 User:', currentUser ? currentUser.email : 'Not logged in');
-        console.log('🔗 Try: https://munaaf-bro.vercel.app/site/jj');
-        console.log('🔗 Try: https://munaaf-bro.vercel.app/site/adbuilagency');
+        console.log('🔗 Auto Subdomain:', currentUser ? `${PROTOCOL}${DOMAIN}/site/${currentUser.subdomain}` : 'Login first');
     </script>
 
 </body>
