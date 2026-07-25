@@ -85,6 +85,9 @@
         .domain-setup h4 { color: #17a2b8; margin-bottom: 5px; }
         .domain-setup p { color: #555; font-size: 0.9rem; }
         .domain-setup code { background: white; padding: 2px 8px; border-radius: 4px; color: #17a2b8; font-weight: 600; }
+        .quick-link { background: #f0ebf8; border-radius: 12px; padding: 15px; margin: 15px 0; text-align: center; }
+        .quick-link a { color: #764ba2; font-weight: 700; text-decoration: none; font-size: 1.1rem; }
+        .quick-link a:hover { text-decoration: underline; }
         @media (max-width: 600px) { .container { padding: 20px; } .header h1 { font-size: 1.8rem; } .stats { flex-direction: column; align-items: center; } .tab-btn { flex: 1; text-align: center; padding: 8px 12px; font-size: 0.9rem; min-width: 80px; } .site-item { flex-direction: column; align-items: flex-start; } .site-item .site-actions { width: 100%; justify-content: flex-start; } }
     </style>
 </head>
@@ -95,18 +98,15 @@
             <h1>🚀 Free Host</h1>
             <p>Apni landing page <strong>FREE</strong> mein host karein</p>
             <span class="badge">⚡ 100% Free</span>
-            <span class="domain-badge">🌐 Custom Domain Ready</span>
+            <span class="domain-badge">🌐 munaaf-bro.vercel.app</span>
         </div>
 
-        <!-- Domain Setup Info -->
-        <div class="domain-setup">
-            <h4>🌐 Apna Domain Kaise Use Karein?</h4>
-            <p>
-                1. Apna domain <code>your-domain.com</code> Vercel pe point karein<br>
-                2. Settings → Domains → Add domain<br>
-                3. DNS records update karein<br>
-                4. Ab domain pe site host karein!
-            </p>
+        <!-- Quick Links -->
+        <div class="quick-link">
+            🔗 Quick Access: 
+            <a href="/site/dd" target="_blank">/site/dd</a> | 
+            <a href="/site/adbuilagency" target="_blank">/site/adbuilagency</a> |
+            <a href="/site/test" target="_blank">/site/test</a>
         </div>
 
         <div class="tab-container">
@@ -121,8 +121,7 @@
                     <label for="subdomain">🔗 Choose Your URL</label>
                     <input type="text" id="subdomain" name="subdomain" placeholder="mypage" required>
                     <div class="example">
-                        💡 Your URL: <code id="urlPreview">https://your-domain.com/mypage</code>
-                        <br><small style="color:#999;">👉 Domain change karne ke liye Settings → Domains mein jaayein</small>
+                        💡 Your URL: <code id="urlPreview">https://munaaf-bro.vercel.app/mypage</code>
                     </div>
                 </div>
 
@@ -179,7 +178,6 @@
             <div class="stat-item"><span class="stat-number" id="totalSites">0</span><span class="stat-label">Total Sites</span></div>
             <div class="stat-item"><span class="stat-number" style="color:#28a745;">●</span><span class="stat-label">Live</span></div>
             <div class="stat-item"><span class="stat-number" style="color:#17a2b8;">100MB</span><span class="stat-label">Max File Size</span></div>
-            <div class="stat-item"><span class="stat-number" style="color:#764ba2;" id="domainDisplay">🌐</span><span class="stat-label">Custom Domain</span></div>
         </div>
     </div>
 
@@ -196,15 +194,12 @@
 
     <script>
         // ============================================
-        // DOMAIN CONFIGURATION - Yahan apna domain daalein
+        // DOMAIN CONFIGURATION
         // ============================================
-        const CUSTOM_DOMAIN = ''; // Apna domain daalein, e.g., 'munaaf-bro.vercel.app'
-        
-        // Auto-detect domain
-        function getDomain() {
-            if (CUSTOM_DOMAIN) return CUSTOM_DOMAIN;
-            return window.location.hostname + (window.location.port ? ':' + window.location.port : '');
-        }
+        const DOMAIN = 'munaaf-bro.vercel.app';
+        const PROTOCOL = 'https://';
+        const STORAGE_KEY = 'hosted_sites';
+        let editingSubdomain = null;
 
         // ============================================
         // ROUTE HANDLER - FIXED FOR VERCEL
@@ -220,7 +215,7 @@
                 
                 let sites = [];
                 try {
-                    sites = JSON.parse(localStorage.getItem('hosted_sites') || '[]');
+                    sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
                 } catch(e) {}
                 
                 const site = sites.find(s => s.subdomain === subdomain);
@@ -235,12 +230,12 @@
                 } else {
                     console.log('❌ Not found:', subdomain);
                     document.body.innerHTML = `
-                        <div style="text-align:center;padding:100px 20px;font-family:Arial;max-width:600px;margin:0 auto;">
+                        <div style="text-align:center;padding:80px 20px;font-family:Arial;max-width:600px;margin:0 auto;">
                             <h1 style="font-size:4rem;color:#764ba2;">🚀</h1>
                             <h2 style="color:#333;margin:20px 0;">Site Not Found</h2>
                             <p style="color:#666;margin:20px 0;">"<strong>${subdomain}</strong>" does not exist</p>
                             <div style="background:#f8f9fa;padding:20px;border-radius:12px;margin:20px 0;text-align:left;">
-                                <p style="color:#555;">💡 <strong>Create this site:</strong></p>
+                                <p style="color:#555;">💡 <strong>Create this site now:</strong></p>
                                 <ol style="color:#555;text-align:left;padding-left:20px;margin:10px 0;">
                                     <li>Go to <a href="/" style="color:#764ba2;">Home</a></li>
                                     <li>Enter subdomain: <code style="background:#e0e0e0;padding:2px 8px;border-radius:4px;">${subdomain}</code></li>
@@ -248,7 +243,10 @@
                                     <li>Click "Free Host Karo!"</li>
                                 </ol>
                             </div>
-                            <a href="/" style="display:inline-block;background:#764ba2;color:white;padding:12px 30px;border-radius:8px;text-decoration:none;font-weight:600;margin-top:10px;">🏠 Go to Home</a>
+                            <div style="margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+                                <a href="/" style="display:inline-block;background:#764ba2;color:white;padding:12px 30px;border-radius:8px;text-decoration:none;font-weight:600;">🏠 Go to Home</a>
+                                <a href="/site/dd" style="display:inline-block;background:#17a2b8;color:white;padding:12px 30px;border-radius:8px;text-decoration:none;font-weight:600;">🔗 Try /site/dd</a>
+                            </div>
                         </div>
                     `;
                     return;
@@ -259,12 +257,7 @@
         // ============================================
         // MAIN JAVASCRIPT
         // ============================================
-        const STORAGE_KEY = 'hosted_sites';
-        let editingSubdomain = null;
-
-        // Update domain display
-        document.getElementById('domainDisplay').textContent = getDomain();
-
+        
         // Tab switching
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.addEventListener('click', function() {
@@ -277,16 +270,14 @@
             });
         });
 
-        // URL Preview - Auto domain update
+        // URL Preview
         document.getElementById('subdomain').addEventListener('input', function() {
             const val = this.value.trim().toLowerCase().replace(/[^a-z0-9-]/g, '');
-            const domain = getDomain();
-            const protocol = window.location.protocol;
-            document.getElementById('urlPreview').textContent = `${protocol}//${domain}/${val || 'your-site'}`;
+            document.getElementById('urlPreview').textContent = `${PROTOCOL}${DOMAIN}/site/${val || 'your-site'}`;
         });
 
         // Initial URL preview
-        document.getElementById('urlPreview').textContent = `${window.location.protocol}//${getDomain()}/your-site`;
+        document.getElementById('urlPreview').textContent = `${PROTOCOL}${DOMAIN}/site/your-site`;
 
         // File upload
         const fileInput = document.getElementById('fileInput');
@@ -341,7 +332,9 @@
             });
         });
 
-        // Form Submit
+        // ============================================
+        // FORM SUBMIT - CREATE SITE
+        // ============================================
         document.getElementById('uploadForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const submitBtn = document.getElementById('submitBtn');
@@ -391,10 +384,12 @@
                 }
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
 
-                const domain = getDomain();
-                const protocol = window.location.protocol;
-                const url = `${protocol}//${domain}/site/${cleanSub}`;
-                showResult(`✅ Success! Landing page live ho gaya!<br><br>🔗 <a href="${url}" target="_blank">${url}</a>`, 'success');
+                const url = `${PROTOCOL}${DOMAIN}/site/${cleanSub}`;
+                showResult(`
+                    ✅ <strong>Success!</strong> Landing page live ho gaya!<br><br>
+                    🔗 <a href="${url}" target="_blank">${url}</a><br>
+                    <small style="display:block;margin-top:10px;">📋 Copy karein aur share karein!</small>
+                `, 'success');
                 
                 document.getElementById('htmlEditor').value = '';
                 document.getElementById('fileInput').value = '';
@@ -412,29 +407,33 @@
             }
         });
 
-        // Load Sites
+        // ============================================
+        // LOAD SITES
+        // ============================================
         function loadSites() {
             const sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
             const siteList = document.getElementById('siteList');
             document.getElementById('totalSites').textContent = sites.length;
 
             if (sites.length === 0) {
-                siteList.innerHTML = '<div class="empty-sites">No sites hosted yet. Upload your first one! 🚀</div>';
+                siteList.innerHTML = `
+                    <div class="empty-sites">
+                        No sites hosted yet. Upload your first one! 🚀<br>
+                        <small style="color:#999;">Try creating: dd, adbuilagency, test</small>
+                    </div>
+                `;
                 return;
             }
-
-            const domain = getDomain();
-            const protocol = window.location.protocol;
 
             siteList.innerHTML = sites.map(site => `
                 <div class="site-item">
                     <div class="site-info">
                         <span>🚀</span>
-                        <a href="${protocol}//${domain}/site/${site.subdomain}" target="_blank" class="site-url">${site.subdomain}</a>
+                        <a href="${PROTOCOL}${DOMAIN}/site/${site.subdomain}" target="_blank" class="site-url">${site.subdomain}</a>
                         <small style="color:#888;">${new Date(site.date).toLocaleDateString()}</small>
                     </div>
                     <div class="site-actions">
-                        <a href="${protocol}//${domain}/site/${site.subdomain}" target="_blank" class="btn-secondary" style="padding:4px 12px;text-decoration:none;">🔗 Visit</a>
+                        <a href="${PROTOCOL}${DOMAIN}/site/${site.subdomain}" target="_blank" class="btn-secondary" style="padding:4px 12px;text-decoration:none;">🔗 Visit</a>
                         <button class="btn-edit" onclick="openEditModal('${site.subdomain}')">✏️ Edit</button>
                         <button class="btn-danger" onclick="deleteSite('${site.subdomain}')">🗑️</button>
                     </div>
@@ -465,7 +464,9 @@
             document.getElementById('totalSites').textContent = sites.length;
         }
 
-        // Edit Modal
+        // ============================================
+        // EDIT MODAL
+        // ============================================
         function openEditModal(subdomain) {
             const sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
             const site = sites.find(s => s.subdomain === subdomain);
@@ -500,7 +501,9 @@
             if (e.target === this) closeEditModal();
         });
 
-        // Show Result
+        // ============================================
+        // SHOW RESULT
+        // ============================================
         function showResult(message, type) {
             const result = document.getElementById('result');
             result.className = type;
@@ -510,7 +513,9 @@
             result._timeout = setTimeout(() => { result.style.display = 'none'; }, 30000);
         }
 
-        // Keyboard shortcuts
+        // ============================================
+        // KEYBOARD SHORTCUTS
+        // ============================================
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeEditModal();
             if (e.ctrlKey && e.key === 's' && document.getElementById('editModal').classList.contains('active')) {
@@ -519,12 +524,46 @@
             }
         });
 
-        // Init
+        // ============================================
+        // AUTO-CREATE SAMPLE SITES
+        // ============================================
+        function createSampleSites() {
+            let sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const samples = [
+                { subdomain: 'dd', html: `<!DOCTYPE html><html><head><title>DD Site</title><style>body{font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#667eea,#764ba2);color:white;text-align:center;margin:0;}.card{background:rgba(255,255,255,0.1);padding:40px;border-radius:20px;backdrop-filter:blur(10px);}h1{font-size:3rem;}</style></head><body><div class="card"><h1>🚀 DD</h1><p>Your site is live!</p><p style="opacity:0.7;">Created at ${new Date().toLocaleString()}</p></div></body></html>` },
+                { subdomain: 'adbuilagency', html: `<!DOCTYPE html><html><head><title>Adbuilagency</title><style>body{font-family:Arial;display:flex;justify-content:center;align-items:center;height:100vh;background:linear-gradient(135deg,#f093fb,#f5576c);color:white;text-align:center;margin:0;}.card{background:rgba(255,255,255,0.1);padding:50px;border-radius:20px;backdrop-filter:blur(10px);}h1{font-size:3rem;}.tag{display:inline-block;background:#28a745;padding:5px 15px;border-radius:20px;font-size:0.8rem;margin-top:10px;}</style></head><body><div class="card"><h1>🚀 Adbuilagency</h1><p>Professional agency landing page</p><span class="tag">⚡ Live</span></div></body></html>` }
+            ];
+
+            let added = 0;
+            samples.forEach(sample => {
+                if (!sites.find(s => s.subdomain === sample.subdomain)) {
+                    sites.push({
+                        subdomain: sample.subdomain,
+                        html: sample.html,
+                        date: new Date().toISOString()
+                    });
+                    added++;
+                }
+            });
+
+            if (added > 0) {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+                console.log(`✅ Added ${added} sample sites`);
+            }
+        }
+
+        // ============================================
+        // INIT
+        // ============================================
+        createSampleSites();
         loadSites();
         updateStats();
+
         console.log('🚀 Free Host Loaded!');
-        console.log('🌐 Domain:', getDomain());
+        console.log('🌐 Domain:', DOMAIN);
         console.log('📊 Total Sites:', JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').length);
+        console.log('🔗 Try: https://munaaf-bro.vercel.app/site/dd');
+        console.log('🔗 Try: https://munaaf-bro.vercel.app/site/adbuilagency');
     </script>
 
 </body>
