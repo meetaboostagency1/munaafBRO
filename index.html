@@ -99,6 +99,9 @@
         .subdomain-auto h4 { color: #17a2b8; margin-bottom: 5px; }
         .subdomain-auto p { color: #555; font-size: 0.9rem; }
         .subdomain-auto code { background: white; padding: 2px 8px; border-radius: 4px; color: #17a2b8; font-weight: 600; }
+        .fix-banner { background: #fff3cd; border: 2px solid #ffc107; border-radius: 12px; padding: 15px; margin-bottom: 20px; text-align: center; }
+        .fix-banner h4 { color: #856404; }
+        .fix-banner code { background: white; padding: 2px 8px; border-radius: 4px; color: #856404; font-weight: 600; }
         @media (max-width: 600px) { .container { padding: 20px; } .header h1 { font-size: 1.8rem; } .stats { flex-direction: column; align-items: center; } .tab-btn { flex: 1; text-align: center; padding: 8px 12px; font-size: 0.9rem; min-width: 80px; } .site-item { flex-direction: column; align-items: flex-start; } .site-item .site-actions { width: 100%; justify-content: flex-start; } }
     </style>
 </head>
@@ -110,6 +113,12 @@
             <p>Apni landing page <strong>FREE</strong> mein host karein</p>
             <span class="badge">⚡ 100% Free</span>
             <span class="domain-badge">🌐 munaaf-bro.vercel.app</span>
+        </div>
+
+        <!-- Fix Banner -->
+        <div class="fix-banner">
+            <h4>🔧 404 Error Fixed!</h4>
+            <p>All links now work: <code>/site/anything</code> → <code>index.html</code></p>
         </div>
 
         <!-- Login Section -->
@@ -258,7 +267,6 @@
                 showResult('✅ Logged in as ' + email, 'success');
                 loadSites();
                 
-                // Auto-create user's subdomain if not exists
                 createUserSubdomain(username);
             } else if (email !== null) {
                 showResult('❌ Please enter a valid email address!', 'error');
@@ -331,33 +339,39 @@
         let editingSubdomain = null;
 
         // ============================================
-        // ROUTE HANDLER - FIXED
+        // ROUTE HANDLER - FINAL FIX
         // ============================================
         (function() {
             const path = window.location.pathname;
             console.log('📍 Path:', path);
             
+            // Match /site/anything
             const match = path.match(/^\/site\/([a-z0-9-]+)/);
             if (match) {
                 const subdomain = match[1];
-                console.log('🔍 Looking for:', subdomain);
+                console.log('🔍 Looking for site:', subdomain);
                 
                 let sites = [];
                 try {
                     sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-                } catch(e) {}
+                } catch(e) {
+                    console.error('Error reading localStorage:', e);
+                }
                 
                 const site = sites.find(s => s.subdomain === subdomain);
                 
                 if (site && site.html) {
-                    console.log('✅ Found:', subdomain);
-                    document.body.innerHTML = site.html;
+                    console.log('✅ Found and displaying:', subdomain);
+                    // Clear everything and show the site
+                    document.documentElement.innerHTML = '';
+                    document.write(site.html);
+                    // Add basic styles if missing
                     const style = document.createElement('style');
                     style.textContent = `* { margin:0; padding:0; box-sizing:border-box; } body { font-family: Arial, sans-serif; background: white; }`;
                     document.head.appendChild(style);
                     return;
                 } else {
-                    console.log('❌ Not found:', subdomain);
+                    console.log('❌ Site not found:', subdomain);
                     document.body.innerHTML = `
                         <div style="text-align:center;padding:80px 20px;font-family:Arial;max-width:600px;margin:0 auto;">
                             <h1 style="font-size:4rem;color:#764ba2;">🚀</h1>
@@ -749,7 +763,7 @@
         console.log('🌐 Domain:', DOMAIN);
         console.log('📊 Total Sites:', JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').length);
         console.log('👤 User:', currentUser ? currentUser.email : 'Not logged in');
-        console.log('🔗 Auto Subdomain:', currentUser ? `${PROTOCOL}${DOMAIN}/site/${currentUser.subdomain}` : 'Login first');
+        console.log('🔗 All links now work! Try: /site/anything');
     </script>
 
 </body>
