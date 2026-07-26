@@ -109,7 +109,6 @@
         .template-card .template-icon { font-size: 2.5rem; margin-bottom: 10px; }
         .template-card .template-name { font-weight: 600; color: #333; }
         
-        /* Editor Modal */
         .editor-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 3000; justify-content: center; align-items: center; padding: 20px; }
         .editor-modal.active { display: flex; }
         .editor-modal-content { background: white; border-radius: 20px; padding: 30px; max-width: 900px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; }
@@ -150,6 +149,10 @@
         .subdomain-auto code { background: white; padding: 2px 8px; border-radius: 4px; color: #17a2b8; font-weight: 600; }
         .password-hint { font-size: 0.8rem; color: #999; margin-top: 5px; }
         .code-editor-badge { display: inline-block; background: #ffc107; color: #333; padding: 2px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; margin-left: 8px; }
+        .working-link-demo { background: #e8f4f8; border-radius: 12px; padding: 15px; margin-bottom: 20px; border-left: 4px solid #17a2b8; }
+        .working-link-demo h4 { color: #17a2b8; margin-bottom: 5px; }
+        .working-link-demo p { color: #555; font-size: 0.9rem; }
+        .working-link-demo code { background: white; padding: 2px 8px; border-radius: 4px; color: #17a2b8; font-weight: 600; }
         @media (max-width: 600px) { .container { padding: 20px; } .header h1 { font-size: 1.8rem; } .stats { flex-direction: column; align-items: center; } .tab-btn { flex: 1; text-align: center; padding: 8px 12px; font-size: 0.9rem; min-width: 80px; } .site-item { flex-direction: column; align-items: flex-start; } .site-item .site-actions { width: 100%; justify-content: flex-start; } .auth-modal-content { padding: 25px; } .btn-group { flex-direction: column; width: 100%; } .btn-group button { width: 100%; } .editor-modal-content { padding: 20px; } .editor-modal-content .editor-header { flex-direction: column; align-items: stretch; } .editor-modal-content .editor-tabs { justify-content: center; } }
     </style>
 </head>
@@ -161,6 +164,13 @@
             <p>Apni landing page <strong>FREE</strong> mein host karein</p>
             <span class="badge">⚡ 100% Free</span>
             <span class="domain-badge">🌐 <span id="domainDisplay">Auto Domain</span></span>
+        </div>
+
+        <!-- Working Link Demo -->
+        <div class="working-link-demo">
+            <h4>✅ Working Links</h4>
+            <p>Your links will work like: <code id="demoLink">http://your-ip:3000/site/yourname</code></p>
+            <small style="color:#999;">👉 Pehle site create karein, phir link open karein!</small>
         </div>
 
         <!-- Login Section -->
@@ -360,9 +370,9 @@
 
         // Update domain display
         document.getElementById('domainDisplay').textContent = DOMAIN;
-        document.querySelectorAll('.example code, .subdomain-auto code, .live-link-box a, #urlPreview, #autoSubdomainLink, #liveLink').forEach(el => {
-            if (el.textContent.includes('your-domain.com') || el.textContent.includes('yourname') || el.textContent.includes('your-site')) {
-                el.textContent = el.textContent.replace(/your-domain\.com/g, DOMAIN);
+        document.querySelectorAll('.example code, .subdomain-auto code, .live-link-box a, #urlPreview, #autoSubdomainLink, #liveLink, #demoLink').forEach(el => {
+            if (el.textContent.includes('your-domain.com') || el.textContent.includes('yourname') || el.textContent.includes('your-site') || el.textContent.includes('your-ip')) {
+                el.textContent = el.textContent.replace(/your-domain\.com|your-ip:3000/g, DOMAIN);
             }
         });
 
@@ -648,7 +658,7 @@
         }
 
         // ============================================
-        // ROUTE HANDLER
+        // ROUTE HANDLER - LINK FIXED
         // ============================================
         (function() {
             const path = window.location.pathname;
@@ -672,9 +682,12 @@
                     console.log('✅ Found and displaying:', subdomain);
                     document.documentElement.innerHTML = '';
                     document.write(site.html);
-                    const style = document.createElement('style');
-                    style.textContent = `* { margin:0; padding:0; box-sizing:border-box; } body { font-family: Arial, sans-serif; background: white; }`;
-                    document.head.appendChild(style);
+                    // Add basic styles if the page doesn't have them
+                    if (!site.html.includes('<style>')) {
+                        const style = document.createElement('style');
+                        style.textContent = `* { margin:0; padding:0; box-sizing:border-box; } body { font-family: Arial, sans-serif; background: white; }`;
+                        document.head.appendChild(style);
+                    }
                     return;
                 } else {
                     console.log('❌ Site not found:', subdomain);
@@ -724,12 +737,10 @@
             document.getElementById('editorCodeArea').value = site.html || '';
             document.getElementById('editorModal').classList.add('active');
             
-            // Reset preview
             document.getElementById('editorPreviewFrame').classList.remove('active');
             document.getElementById('editorPreviewFrame').style.display = 'none';
             document.getElementById('editorCodeArea').style.display = 'block';
             
-            // Update tabs
             document.querySelectorAll('.editor-tabs button').forEach(b => b.classList.remove('active'));
             document.querySelector('.editor-tabs button:first-child').classList.add('active');
         }
@@ -792,7 +803,6 @@
                 closeEditorModal();
                 loadSites();
                 
-                // Update live link box if currently viewing
                 const liveLink = document.getElementById('liveLink');
                 if (liveLink.href.includes(editorSubdomain)) {
                     const url = `${PROTOCOL}//${DOMAIN}/site/${editorSubdomain}`;
@@ -1175,6 +1185,7 @@
         console.log('📊 Total Sites:', JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]').length);
         console.log('👤 User:', currentUser ? currentUser.email : 'Not logged in');
         console.log('🔗 Try: /site/jj or /site/adbuilagency');
+        console.log('🔗 Your links will work at: ' + PROTOCOL + '//' + DOMAIN + '/site/yourname');
         console.log('💾 Backup & Restore available!');
         console.log('🖥️ Advanced Code Editor available!');
         console.log('✅ No Vercel dependency! Works on any server!');
