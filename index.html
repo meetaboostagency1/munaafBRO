@@ -7,7 +7,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: slideUp 0.6s ease-out; }
+        .container { max-width: 1100px; margin: 0 auto; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); animation: slideUp 0.6s ease-out; }
         @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         .header { text-align: center; margin-bottom: 30px; }
         .header h1 { font-size: 2.8rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
@@ -108,6 +108,30 @@
         .template-card:hover { border-color: #764ba2; transform: translateY(-3px); box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
         .template-card .template-icon { font-size: 2.5rem; margin-bottom: 10px; }
         .template-card .template-name { font-weight: 600; color: #333; }
+        
+        /* Editor Modal */
+        .editor-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 3000; justify-content: center; align-items: center; padding: 20px; }
+        .editor-modal.active { display: flex; }
+        .editor-modal-content { background: white; border-radius: 20px; padding: 30px; max-width: 900px; width: 100%; max-height: 90vh; display: flex; flex-direction: column; }
+        .editor-modal-content .editor-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px; }
+        .editor-modal-content .editor-header h2 { color: #333; }
+        .editor-modal-content .editor-tabs { display: flex; gap: 10px; flex-wrap: wrap; }
+        .editor-modal-content .editor-tabs button { padding: 6px 16px; border: 2px solid #e0e0e0; background: white; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s; }
+        .editor-modal-content .editor-tabs button.active { border-color: #764ba2; background: #f0ebf8; color: #764ba2; }
+        .editor-modal-content .editor-tabs button:hover { border-color: #764ba2; }
+        .editor-modal-content .editor-body { flex: 1; display: flex; flex-direction: column; }
+        .editor-modal-content .editor-body textarea { width: 100%; flex: 1; min-height: 300px; padding: 14px; border: 2px solid #e0e0e0; border-radius: 12px; font-family: 'Courier New', monospace; font-size: 0.9rem; resize: vertical; }
+        .editor-modal-content .editor-actions { display: flex; gap: 10px; margin-top: 15px; justify-content: flex-end; flex-wrap: wrap; }
+        .editor-modal-content .editor-actions button { padding: 10px 24px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .editor-modal-content .editor-actions .btn-save { background: #28a745; color: white; }
+        .editor-modal-content .editor-actions .btn-save:hover { background: #218838; }
+        .editor-modal-content .editor-actions .btn-preview { background: #17a2b8; color: white; }
+        .editor-modal-content .editor-actions .btn-preview:hover { background: #138496; }
+        .editor-modal-content .editor-actions .btn-close-editor { background: #6c757d; color: white; }
+        .editor-modal-content .editor-actions .btn-close-editor:hover { background: #5a6268; }
+        .editor-modal-content .preview-frame { width: 100%; height: 400px; border: 2px solid #e0e0e0; border-radius: 12px; display: none; }
+        .editor-modal-content .preview-frame.active { display: block; }
+        
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; padding: 20px; }
         .modal-overlay.active { display: flex; }
         .modal { background: white; border-radius: 20px; padding: 30px; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; }
@@ -125,7 +149,8 @@
         .subdomain-auto p { color: #555; font-size: 0.9rem; }
         .subdomain-auto code { background: white; padding: 2px 8px; border-radius: 4px; color: #17a2b8; font-weight: 600; }
         .password-hint { font-size: 0.8rem; color: #999; margin-top: 5px; }
-        @media (max-width: 600px) { .container { padding: 20px; } .header h1 { font-size: 1.8rem; } .stats { flex-direction: column; align-items: center; } .tab-btn { flex: 1; text-align: center; padding: 8px 12px; font-size: 0.9rem; min-width: 80px; } .site-item { flex-direction: column; align-items: flex-start; } .site-item .site-actions { width: 100%; justify-content: flex-start; } .auth-modal-content { padding: 25px; } .btn-group { flex-direction: column; width: 100%; } .btn-group button { width: 100%; } }
+        .code-editor-badge { display: inline-block; background: #ffc107; color: #333; padding: 2px 10px; border-radius: 12px; font-size: 0.7rem; font-weight: 700; margin-left: 8px; }
+        @media (max-width: 600px) { .container { padding: 20px; } .header h1 { font-size: 1.8rem; } .stats { flex-direction: column; align-items: center; } .tab-btn { flex: 1; text-align: center; padding: 8px 12px; font-size: 0.9rem; min-width: 80px; } .site-item { flex-direction: column; align-items: flex-start; } .site-item .site-actions { width: 100%; justify-content: flex-start; } .auth-modal-content { padding: 25px; } .btn-group { flex-direction: column; width: 100%; } .btn-group button { width: 100%; } .editor-modal-content { padding: 20px; } .editor-modal-content .editor-header { flex-direction: column; align-items: stretch; } .editor-modal-content .editor-tabs { justify-content: center; } }
     </style>
 </head>
 <body>
@@ -286,13 +311,36 @@
         </div>
     </div>
 
+    <!-- Simple Edit Modal -->
     <div class="modal-overlay" id="editModal">
         <div class="modal">
-            <h2>✏️ Edit Landing Page: <span id="editSubdomain"></span></h2>
+            <h2>✏️ Edit Landing Page: <span id="editSubdomain"></span> <span class="code-editor-badge">Live Editor</span></h2>
             <textarea id="editHtmlContent"></textarea>
             <div class="modal-actions">
                 <button class="btn-close" onclick="closeEditModal()">❌ Cancel</button>
                 <button class="btn-save" onclick="saveEdit()">💾 Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Advanced Code Editor Modal -->
+    <div class="editor-modal" id="editorModal">
+        <div class="editor-modal-content">
+            <div class="editor-header">
+                <h2>🖥️ Advanced Code Editor <span class="code-editor-badge">Live Preview</span></h2>
+                <div class="editor-tabs">
+                    <button class="active" onclick="switchEditorTab('code')">📝 Code</button>
+                    <button onclick="switchEditorTab('preview')">👁️ Preview</button>
+                </div>
+            </div>
+            <div class="editor-body">
+                <textarea id="editorCodeArea" placeholder="Write your HTML code here..."></textarea>
+                <iframe class="preview-frame" id="editorPreviewFrame" sandbox="allow-scripts allow-modals allow-same-origin"></iframe>
+            </div>
+            <div class="editor-actions">
+                <button class="btn-preview" onclick="previewEditorCode()">👁️ Preview</button>
+                <button class="btn-save" onclick="saveEditorCode()">💾 Save Changes</button>
+                <button class="btn-close-editor" onclick="closeEditorModal()">❌ Close</button>
             </div>
         </div>
     </div>
@@ -308,6 +356,7 @@
         let currentUser = null;
         let editingSubdomain = null;
         let isLoginMode = false;
+        let editorSubdomain = null;
 
         // Update domain display
         document.getElementById('domainDisplay').textContent = DOMAIN;
@@ -364,7 +413,7 @@
         }
 
         // ============================================
-        // AUTHENTICATION - LOCAL STORAGE
+        // AUTHENTICATION
         // ============================================
         function loadUser() {
             const saved = localStorage.getItem('freehost_user');
@@ -480,7 +529,6 @@
             const users = getUsers();
 
             if (isLoginMode) {
-                // Login
                 if (!users[email]) {
                     showResult('❌ User not found! Please register first.', 'error');
                     return;
@@ -502,9 +550,7 @@
                 showResult('✅ Logged in as ' + email, 'success');
                 loadSites();
                 createUserSubdomain(currentUser.subdomain);
-
             } else {
-                // Register
                 if (users[email]) {
                     showResult('❌ User already exists! Please login.', 'error');
                     return;
@@ -514,7 +560,6 @@
                     created: new Date().toISOString()
                 };
                 saveUsers(users);
-                
                 currentUser = {
                     email: email,
                     name: email.split('@')[0].toLowerCase().replace(/[^a-z0-9-]/g, ''),
@@ -603,7 +648,7 @@
         }
 
         // ============================================
-        // ROUTE HANDLER - NO VERCEL DEPENDENCY
+        // ROUTE HANDLER
         // ============================================
         (function() {
             const path = window.location.pathname;
@@ -654,6 +699,110 @@
                 }
             }
         })();
+
+        // ============================================
+        // ADVANCED CODE EDITOR
+        // ============================================
+        function openEditorModal(subdomain) {
+            if (!currentUser) {
+                showResult('❌ Please login first!', 'error');
+                return;
+            }
+            
+            const sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const site = sites.find(s => s.subdomain === subdomain);
+            if (!site) {
+                showResult('❌ Site not found!', 'error');
+                return;
+            }
+            if (site.user !== currentUser.email) {
+                showResult('❌ You can only edit your own sites!', 'error');
+                return;
+            }
+            
+            editorSubdomain = subdomain;
+            document.getElementById('editorCodeArea').value = site.html || '';
+            document.getElementById('editorModal').classList.add('active');
+            
+            // Reset preview
+            document.getElementById('editorPreviewFrame').classList.remove('active');
+            document.getElementById('editorPreviewFrame').style.display = 'none';
+            document.getElementById('editorCodeArea').style.display = 'block';
+            
+            // Update tabs
+            document.querySelectorAll('.editor-tabs button').forEach(b => b.classList.remove('active'));
+            document.querySelector('.editor-tabs button:first-child').classList.add('active');
+        }
+
+        function closeEditorModal() {
+            document.getElementById('editorModal').classList.remove('active');
+            editorSubdomain = null;
+        }
+
+        function switchEditorTab(tab) {
+            const codeArea = document.getElementById('editorCodeArea');
+            const previewFrame = document.getElementById('editorPreviewFrame');
+            const tabs = document.querySelectorAll('.editor-tabs button');
+            
+            tabs.forEach(b => b.classList.remove('active'));
+            
+            if (tab === 'code') {
+                tabs[0].classList.add('active');
+                codeArea.style.display = 'block';
+                previewFrame.style.display = 'none';
+                previewFrame.classList.remove('active');
+            } else {
+                tabs[1].classList.add('active');
+                previewEditorCode();
+            }
+        }
+
+        function previewEditorCode() {
+            const code = document.getElementById('editorCodeArea').value;
+            const previewFrame = document.getElementById('editorPreviewFrame');
+            
+            previewFrame.style.display = 'block';
+            previewFrame.classList.add('active');
+            document.getElementById('editorCodeArea').style.display = 'none';
+            
+            const blob = new Blob([code], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            previewFrame.src = url;
+            
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+
+        function saveEditorCode() {
+            const newHtml = document.getElementById('editorCodeArea').value;
+            
+            if (!editorSubdomain) {
+                showResult('❌ No site selected!', 'error');
+                return;
+            }
+            
+            let sites = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+            const site = sites.find(s => s.subdomain === editorSubdomain);
+            
+            if (site) {
+                site.html = newHtml;
+                site.date = new Date().toISOString();
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(sites));
+                
+                showResult(`✅ "${editorSubdomain}" updated successfully!`, 'success');
+                closeEditorModal();
+                loadSites();
+                
+                // Update live link box if currently viewing
+                const liveLink = document.getElementById('liveLink');
+                if (liveLink.href.includes(editorSubdomain)) {
+                    const url = `${PROTOCOL}//${DOMAIN}/site/${editorSubdomain}`;
+                    liveLink.href = url;
+                    liveLink.textContent = url;
+                }
+            } else {
+                showResult('❌ Site not found!', 'error');
+            }
+        }
 
         // ============================================
         // REST OF THE JAVASCRIPT
@@ -873,6 +1022,7 @@
                         ${currentUser && site.user === currentUser.email ? `
                             <button class="btn-edit" onclick="openEditModal('${site.subdomain}')">✏️ Edit</button>
                             <button class="btn-danger" onclick="deleteSite('${site.subdomain}')">🗑️</button>
+                            <button class="btn-edit" style="background:#ffc107;color:#333;" onclick="openEditorModal('${site.subdomain}')">🖥️ Code Editor</button>
                         ` : ''}
                     </div>
                 </div>
@@ -913,7 +1063,7 @@
         }
 
         // ============================================
-        // EDIT MODAL
+        // SIMPLE EDIT MODAL
         // ============================================
         function openEditModal(subdomain) {
             if (!currentUser) { showResult('❌ Please login first!', 'error'); return; }
@@ -968,10 +1118,17 @@
                 closeEditModal();
                 closeAuthModal();
                 closeForgotModal();
+                closeEditorModal();
             }
-            if (e.ctrlKey && e.key === 's' && document.getElementById('editModal').classList.contains('active')) {
-                e.preventDefault();
-                saveEdit();
+            if (e.ctrlKey && e.key === 's') {
+                if (document.getElementById('editModal').classList.contains('active')) {
+                    e.preventDefault();
+                    saveEdit();
+                }
+                if (document.getElementById('editorModal').classList.contains('active')) {
+                    e.preventDefault();
+                    saveEditorCode();
+                }
             }
         });
 
@@ -1019,6 +1176,7 @@
         console.log('👤 User:', currentUser ? currentUser.email : 'Not logged in');
         console.log('🔗 Try: /site/jj or /site/adbuilagency');
         console.log('💾 Backup & Restore available!');
+        console.log('🖥️ Advanced Code Editor available!');
         console.log('✅ No Vercel dependency! Works on any server!');
     </script>
 
